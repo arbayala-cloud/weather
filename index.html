@@ -30,6 +30,7 @@ h2{font:600 15px inherit;margin:0 0 10px;color:var(--mut);text-transform:upperca
 .ed{display:flex;gap:4px;margin-top:6px}.ed button{background:#1d0c27;border:1px solid #8a4a1f;color:var(--ink);border-radius:8px;font:12px inherit;padding:3px 6px;cursor:pointer}.ed button.del{border-color:#ff4a3a;color:#ff9a7a}
 .chip.on .ed button{background:#fff1de;color:#1c0b2b}
 .savebtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#1d0c27;border:1.5px solid #ffb35c;color:#ffb35c;border-radius:12px;padding:6px 12px;font:600 13px inherit;cursor:pointer}.savebtn svg{width:18px;height:18px}.savebtn.saved{background:#ffb35c;color:#1c0b2b}
+.picks{display:flex;flex-direction:column;gap:8px}.pickb{display:flex;flex-direction:column;align-items:flex-start;background:#3a1b4a;border:1.5px solid #ff7a1a55;color:var(--ink);border-radius:14px;padding:10px 14px;font:inherit;cursor:pointer;text-align:left}.pickb b{font-size:16px}.pickb small{color:var(--mut);font-size:12px}.pickb:active{background:#ff7a1a;color:#1c0b2b}
 .msg{text-align:center;color:var(--mut);padding:20px}.err{color:#ff9a7a}
 .foot{text-align:center;font-size:11px;color:var(--mut);margin-top:18px}.foot a{color:inherit}
 #inst[hidden],[hidden]{display:none!important}#ihelp{font-size:13px}
@@ -73,8 +74,8 @@ for(let i=0;i<9;i++){const d=document.createElement('div');d.className='lf';cons
 <svg class="sk" viewBox="0 0 60 100" style="animation-delay:-.2s"><g class="bod" fill="none" stroke="#f3ead8" stroke-width="3" stroke-linecap="round"><circle cx="30" cy="14" r="10" fill="#f3ead8"/><g fill="#2a0f3d" stroke="none"><circle cx="26" cy="13" r="2.6"/><circle cx="34" cy="13" r="2.6"/></g><path d="M27 19.5h6M28.5 19v2M31.5 19v2" stroke="#2a0f3d" stroke-width="1.2"/><path d="M30 24v28"/><path d="M23 32h14M24 37h12M25 42h10"/><path class="arm r" d="M26 30l-12 14l-4 10"/><path class="arm l" d="M34 30l12 14l4 10"/><path d="M24 54h12"/><path class="leg r" d="M26 54l-6 20l-6 2"/><path class="leg l" d="M34 54l6 20l6 2"/></g></svg>
 </div>
 <div class="card" id="ihelp" hidden></div>
-<div class="card"><form id="f"><input id="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="Enter your ZIP code" aria-label="ZIP code" autocomplete="postal-code"><button class="go">Go</button></form><div class="lhead" id="lhead" hidden><h2>My places</h2><button class="lk" id="ledit" type="button">Edit</button></div><div class="locs" id="locs"></div></div>
-<div id="out"><p class="msg">Type your ZIP code to see your weather.</p></div>
+<div class="card"><form id="f"><input id="zip" placeholder="City or ZIP" aria-label="City or ZIP" autocomplete="off" enterkeyhint="search"><button class="go">Go</button></form><div class="lhead" id="lhead" hidden><h2>My places</h2><button class="lk" id="ledit" type="button">Edit</button></div><div class="locs" id="locs"></div></div>
+<div id="out"><p class="msg">Type a city or ZIP code to see your weather.</p></div>
 <p class="foot">Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Alerts: <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a> · ZIP lookup: Zippopotam.us</p>
 </div>
 <script>
@@ -89,13 +90,13 @@ function ic(k,night){const sun=night?'<path d="M30 10a14 14 0 1 0 14 18a11 11 0 
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const tm=s=>new Date(s).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 function greet(){const h=new Date().getHours();$('greet').textContent=h<12?'Good morning, Ashley':h<17?'Good afternoon, Ashley':'Good evening, Ashley'}greet();
-async function geo(zip){const r=await fetch('https://api.zippopotam.us/us/'+zip);if(!r.ok)throw new Error('ZIP code not found');const j=await r.json(),p=j.places[0];return{lat:+p.latitude,lon:+p.longitude,name:p['place name']+', '+p['state abbreviation']}}
+async function geo(zip){if(zip.startsWith('geo:')){const [ll,nm]=zip.slice(4).split('|');const [a,b]=ll.split(',');return{lat:+a,lon:+b,name:nm}}const r=await fetch('https://api.zippopotam.us/us/'+zip);if(!r.ok)throw new Error('ZIP code not found');const j=await r.json(),p=j.places[0];return{lat:+p.latitude,lon:+p.longitude,name:p['place name']+', '+p['state abbreviation']}}
 let curZip=null;async function load(zip){curZip=zip;$('out').innerHTML='<p class="msg">Loading your weather…</p>';
  try{const g=await geo(zip);
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,is_day&hourly=temperature_2m,weather_code,precipitation_probability,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7`;
   const [w,al]=await Promise.all([fetch(u).then(r=>{if(!r.ok)throw new Error('Weather service unavailable');return r.json()}),fetch(`https://api.weather.gov/alerts/active?point=${g.lat.toFixed(4)},${g.lon.toFixed(4)}`,{headers:{Accept:'application/geo+json'}}).then(r=>r.ok?r.json():null).catch(()=>null)]);
   localStorage.setItem(KC,JSON.stringify({zip,g,w,al,t:Date.now()}));render(g,w,al,Date.now())}
- catch(e){const c=JSON.parse(localStorage.getItem(KC)||'null');if(c&&c.zip===zip){render(c.g,c.w,c.al,c.t);$('out').insertAdjacentHTML('afterbegin','<p class="msg err">Offline — showing last saved weather.</p>')}else $('out').innerHTML='<p class="msg err">'+esc(e.message||'Something went wrong')+'. Check the ZIP and try again.</p>'}}
+ catch(e){const c=JSON.parse(localStorage.getItem(KC)||'null');if(c&&c.zip===zip){render(c.g,c.w,c.al,c.t);$('out').insertAdjacentHTML('afterbegin','<p class="msg err">Offline — showing last saved weather.</p>')}else $('out').innerHTML='<p class="msg err">'+esc(e.message||'Something went wrong')+'. Check it and try again.</p>'}}
 function render(g,w,al,t){const c=w.current,d=w.daily,h=w.hourly,[cn,ck]=W[c.weather_code]||['—','cloud'];let H='';
  (al&&al.features||[]).forEach(f=>{const p=f.properties;H+=`<div class="alert ${/Severe|Extreme/.test(p.severity)?'sev':''}"><b>Alert: ${esc(p.event)}</b><span class="sub">${esc(p.headline||'')}</span><details><summary>Details</summary>${esc((p.description||'')+(p.instruction?'\n\n'+p.instruction:''))}</details></div>`});
  H+=`<div class="card"><div class="place">${esc(g.name)}</div><div class="upd">Updated ${new Date(t).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div>
@@ -108,7 +109,23 @@ function render(g,w,al,t){const c=w.current,d=w.daily,h=w.hourly,[cn,ck]=W[c.wea
   H+=`<div class="d"><b>${i===0?'Today':new Date(x+'T12:00').toLocaleDateString([], {weekday:'short'})}</b><span title="${nm}">${ic(k)}</span><span class="rp">${d.precipitation_probability_max[i]?d.precipitation_probability_max[i]+'%':''}</span><div><div class="rng"><span>${Math.round(d.temperature_2m_min[i])}°</span><b>${Math.round(d.temperature_2m_max[i])}°</b></div><div class="bar"><i style="left:${a}%;right:${100-b}%"></i></div></div></div>`});H+='</div>';
  H+=`<div class="card sun"><div><span class="sub">Sunrise</span><b>${tm(d.sunrise[0])}</b></div><div><span class="sub">Sunset</span><b>${tm(d.sunset[0])}</b></div><div><span class="sub">UV max</span><b>${Math.round(d.uv_index_max[0]??0)}</b></div></div>`;
  $('out').innerHTML=H;if(window.onLoaded)onLoaded(curZip,g,w)}
-$('f').onsubmit=e=>{e.preventDefault();const z=$('zip').value.trim();if(!/^\d{5}$/.test(z)){$('out').innerHTML='<p class="msg err">Please enter a 5-digit ZIP code.</p>';return}localStorage.setItem(K,z);$('zip').blur();load(z)};
+const ST={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico'},AB=Object.fromEntries(Object.entries(ST).map(([k,v])=>[v.toLowerCase(),k]));
+const keyOf=r=>{const s=AB[(r.admin1||'').toLowerCase()];return 'geo:'+(+r.latitude).toFixed(4)+','+(+r.longitude).toFixed(4)+'|'+r.name+(s?', '+s:r.admin1?', '+r.admin1:'')+(r.country_code&&r.country_code!=='US'?', '+r.country:'')};
+async function city(q){let [nm,...rest]=q.split(',').map(s=>s.trim());let st=(rest.join(' ')||'').trim();const stFull=st?(ST[st.toUpperCase()]||st).toLowerCase():'';
+ const go=async cc=>{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=15&language=en&format=json&name='+encodeURIComponent(nm.replace(/^st\.?\s/i,'Saint '))+(cc?'&countryCode='+cc:''));const j=await r.json();return j.results||[]};
+ let R=await go('US');if(!R.length&&/^st\.?\s/i.test(nm)){const r2=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=15&language=en&format=json&countryCode=US&name='+encodeURIComponent(nm));R=(await r2.json()).results||[]}
+ if(!R.length)R=await go('');if(stFull)R=R.filter(r=>(r.admin1||'').toLowerCase().startsWith(stFull)||(r.country||'').toLowerCase().startsWith(stFull));return R}
+function pick(R){$('out').innerHTML='<div class="card"><h2>Which one?</h2><div class="picks"></div></div>';const P=$('out').querySelector('.picks');
+ R.slice(0,8).forEach(r=>{const k=keyOf(r),b=document.createElement('button');b.type='button';b.className='pickb';b.innerHTML='<b></b><small></small>';b.querySelector('b').textContent=k.split('|')[1];b.querySelector('small').textContent=[r.admin2,r.population?(r.population.toLocaleString()+' people'):''].filter(Boolean).join(' · ');b.onclick=()=>choose(k);P.appendChild(b)})}
+function choose(k){$('zip').value=k.split('|')[1];localStorage.setItem(K,k);load(k)}
+$('f').onsubmit=async e=>{e.preventDefault();const z=$('zip').value.trim();$('zip').blur();if(!z)return;
+ if(/^\d{5}$/.test(z)){localStorage.setItem(K,z);load(z);return}
+ if(/^\d+$/.test(z)){$('out').innerHTML='<p class="msg err">Please enter a 5-digit ZIP code or a city name.</p>';return}
+ $('out').innerHTML='<p class="msg">Looking up '+esc(z)+'…</p>';
+ try{const R=await city(z);if(!R.length){$('out').innerHTML='<p class="msg err">Couldn\'t find “'+esc(z)+'”. Try adding the state, like “Fort Worth, TX”.</p>';return}
+  const top=R.filter(r=>r.name.toLowerCase()===z.split(',')[0].trim().toLowerCase().replace(/^st\.?\s/,'saint '));const base=top.length?top:R;const uniq=[...new Map(base.map(r=>[keyOf(r).split('|')[1],r])).values()];
+  if(uniq.length===1||(z.includes(',')&&new Set(base.map(r=>r.admin1)).size===1))choose(keyOf(base[0]));else pick(uniq)}
+ catch(err){$('out').innerHTML='<p class="msg err">Search is unavailable right now. Try a ZIP code.</p>'}};
 
 const KL='aw.locs';let LOC=JSON.parse(localStorage.getItem(KL)||'null'),edit=false,curZ=null,curG=null;
 if(!LOC){LOC=[];const z=localStorage.getItem(K);if(z)LOC.push({zip:z});localStorage.setItem(KL,JSON.stringify(LOC))}
@@ -116,14 +133,14 @@ const saveL=()=>localStorage.setItem(KL,JSON.stringify(LOC));
 const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="currentColor"/></svg>',STARO=STAR.replace('fill="currentColor"','fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"');
 function chips(){const L=$('locs');L.innerHTML='';$('lhead').hidden=!LOC.length;$('ledit').textContent=edit?'Done':'Edit';
  LOC.forEach((l,i)=>{const c=document.createElement('div');c.className='chip'+(l.zip===curZ?' on':'');c.setAttribute('role','button');c.tabIndex=0;
-  c.innerHTML=`<b></b><small></small><span class="t">${l.temp!=null?Math.round(l.temp)+'°':''}</span>`;c.querySelector('b').textContent=(l.nick||l.name||l.zip);if(i===0)c.querySelector('b').insertAdjacentHTML('beforeend','<span class="def" title="Default">'+STAR+'</span>');
-  c.querySelector('small').textContent=l.nick?(l.name||l.zip):(i===0?'Default':l.zip);
+  c.innerHTML=`<b></b><small></small><span class="t">${l.temp!=null?Math.round(l.temp)+'°':''}</span>`;c.querySelector('b').textContent=(l.nick||l.name||(l.zip.split('|')[1]||l.zip));if(i===0)c.querySelector('b').insertAdjacentHTML('beforeend','<span class="def" title="Default">'+STAR+'</span>');
+  c.querySelector('small').textContent=l.nick?(l.name||''):(i===0?'Default':(/^\d{5}$/.test(l.zip)?l.zip:''));
   if(edit){const e=document.createElement('div');e.className='ed';e.innerHTML=(i>0?'<button data-a="up" type="button">&#8592;</button><button data-a="def" type="button">Default</button>':'')+(i<LOC.length-1?'<button data-a="dn" type="button">&#8594;</button>':'')+'<button data-a="nick" type="button">Name</button><button data-a="del" class="del" type="button">Delete</button>';
    e.onclick=ev=>{ev.stopPropagation();const a=ev.target.dataset.a;if(!a)return;
     if(a==='up'){[LOC[i-1],LOC[i]]=[LOC[i],LOC[i-1]]}else if(a==='dn'){[LOC[i+1],LOC[i]]=[LOC[i],LOC[i+1]]}else if(a==='def'){LOC.unshift(LOC.splice(i,1)[0])}
     else if(a==='nick'){const n=prompt('Nickname for '+(l.name||l.zip)+' (e.g. Home, Grandma). Leave blank to clear:',l.nick||'');if(n===null)return;l.nick=n.trim().slice(0,20)}
     else if(a==='del'){if(!confirm('Delete '+(l.nick||l.name||l.zip)+' from your places?'))return;LOC.splice(i,1)}saveL();chips();sbtn()};c.appendChild(e)}
-  c.onclick=()=>{if(edit)return;$('zip').value=l.zip;localStorage.setItem(K,l.zip);load(l.zip)};c.onkeydown=e=>{if(e.key==='Enter')c.click()};L.appendChild(c)})}
+  c.onclick=()=>{if(edit)return;$('zip').value=l.zip.startsWith('geo:')?l.zip.split('|')[1]:l.zip;localStorage.setItem(K,l.zip);load(l.zip)};c.onkeydown=e=>{if(e.key==='Enter')c.click()};L.appendChild(c)})}
 function sbtn(){const b=$('savebtn');if(!b)return;const s=LOC.some(l=>l.zip===curZ);b.className='savebtn'+(s?' saved':'');b.innerHTML=(s?STAR+'Saved':STARO+'Save location')}
 function onLoaded(zip,g,w){curZ=zip;curG=g;const l=LOC.find(x=>x.zip===zip);if(l){l.name=g.name;l.lat=g.lat;l.lon=g.lon;l.temp=w.current.temperature_2m;l.t=Date.now();saveL()}
  const pl=document.querySelector('#out .place');if(pl&&!$('savebtn')){pl.insertAdjacentHTML('afterend','<button class="savebtn" id="savebtn" type="button"></button>');$('savebtn').onclick=()=>{const i=LOC.findIndex(x=>x.zip===curZ);
@@ -133,7 +150,7 @@ $('ledit').onclick=()=>{edit=!edit;chips()};
 async function temps(){const s=LOC.filter(l=>l.lat!=null&&(!l.t||Date.now()-l.t>6e5));if(!s.length)return;try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.map(l=>l.lat).join(',')}&longitude=${s.map(l=>l.lon).join(',')}&current=temperature_2m&temperature_unit=fahrenheit`);const j=await r.json();const a=Array.isArray(j)?j:[j];a.forEach((x,i)=>{s[i].temp=x.current.temperature_2m;s[i].t=Date.now()});saveL();chips()}catch(e){}}
 chips();temps();
 window.onLoaded=onLoaded;
-const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0;localStorage.setItem(K,z0);load(z0)}
+const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>6e5)load(localStorage.getItem(K))}});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/weather/sw.js',{scope:'/weather/'}).catch(()=>{});
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
