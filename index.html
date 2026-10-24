@@ -6,7 +6,7 @@
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg1),var(--bg2)) fixed;min-height:100vh;overflow-x:hidden}
 .app{max-width:520px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
 header{display:flex;align-items:center;gap:10px;margin-bottom:12px}header img{width:40px;height:40px;border-radius:12px;box-shadow:0 0 14px #ff7a1a66}
-h1{color:#ffb35c;text-shadow:0 0 10px #ff7a1a88;font:600 22px/1.1 Georgia,"Times New Roman",serif;margin:0;flex:1}h1 small{display:block;font:13px -apple-system,system-ui,sans-serif;color:var(--mut);margin-top:3px}
+h1{color:#ffb35c;text-shadow:0 0 10px #ff7a1a88;font:600 22px/1.1 Georgia,"Times New Roman",serif;margin:0;flex:1;text-align:center}h1 small{display:block;font:13px -apple-system,system-ui,sans-serif;color:var(--mut);margin-top:3px}
 .ib{background:#ff7a1a;color:#1c0b2b;border:0;border-radius:12px;padding:8px 11px;font:600 13px inherit;color:var(--ink);cursor:pointer;box-shadow:0 1px 4px #0001}
 .card{background:var(--card);border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 4px 18px #0006;border:1px solid #ff7a1a33;backdrop-filter:blur(6px)}
 form{display:flex;gap:8px}input{flex:1;font-size:17px;padding:12px 14px;border:1.5px solid #8a4a1f;border-radius:14px;background:#1d0c27;color:var(--ink);min-width:0}input:focus{outline:2px solid var(--acc);border-color:transparent}
@@ -49,7 +49,7 @@ h2{font:600 15px inherit;margin:0 0 10px;color:var(--mut);text-transform:upperca
 for(let i=0;i<9;i++){const d=document.createElement('div');d.className='lf';const c=C[i%C.length];d.innerHTML=`<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2c3 4 9 5 9 11c-3-1-5 0-6 2c1 2 0 5-3 7c-3-2-4-5-3-7c-1-2-3-3-6-2c0-6 6-7 9-11z" fill="${c}" opacity=".85"/><path d="M12 6v16" stroke="#5a1a05" stroke-width="1"/></svg>`;
  d.style.left=(Math.random()*95)+'%';d.style.animationDuration=(10+Math.random()*10)+'s';d.style.animationDelay=(-Math.random()*20)+'s';const s=14+Math.random()*14;d.style.width=d.style.height=s+'px';L.appendChild(d)}})();</script>
 <div class="app">
-<header><img src="icons/icon-192.png" alt=""><h1>Ashley's Weather<small id="greet">Hello, Ashley</small></h1><button class="ib" id="inst" type="button">Install App</button></header>
+<header><h1>Ashley's Weather<small id="greet">Hello, Ashley</small></h1><button class="ib" id="inst" type="button">Install App</button></header>
 <div class="spook" aria-hidden="true">
 <svg class="sk" viewBox="0 0 60 100"><g class="bod" fill="none" stroke="#f3ead8" stroke-width="3" stroke-linecap="round"><circle cx="30" cy="14" r="10" fill="#f3ead8"/><g fill="#2a0f3d" stroke="none"><circle cx="26" cy="13" r="2.6"/><circle cx="34" cy="13" r="2.6"/><path d="M27 19h6"/></g><path d="M27 19.5h6M28.5 19v2M31.5 19v2" stroke="#2a0f3d" stroke-width="1.2"/>
 <path d="M30 24v28"/><path d="M23 32h14M24 37h12M25 42h10"/><path class="arm l" d="M26 30l-12 14l-4 10"/><path class="arm r" d="M34 30l12 14l4 10"/><path d="M24 54h12"/><path class="leg l" d="M26 54l-6 20l-6 2"/><path class="leg r" d="M34 54l6 20l6 2"/></g></svg>
