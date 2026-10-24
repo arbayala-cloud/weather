@@ -22,6 +22,14 @@ h2{font:600 15px inherit;margin:0 0 10px;color:var(--mut);text-transform:upperca
 .bar{position:relative;height:6px;border-radius:3px;background:#4a2a5a}.bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#9a6bd6,#ffb627,#d9420f)}.rng{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}.rng span{color:var(--mut)}
 .alert{background:#4a2410;color:#fff1de;border-left:5px solid #e8742a;border-radius:14px;padding:12px;margin:12px 0}.alert.sev{background:#5a1010;border-color:#ff4a3a}.alert b{display:block}.alert details{font-size:13px;color:#f3d6c0;margin-top:6px;white-space:pre-wrap}
 .sun{display:flex;justify-content:space-around;text-align:center}.sun b{display:block;font-size:17px}
+.locs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:12px 0 0}.locs:empty{display:none}
+.chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:#3a1b4a;border:1.5px solid #ff7a1a55;color:var(--ink);border-radius:14px;padding:7px 12px;cursor:pointer;font:inherit;min-width:92px;text-align:left}
+.chip.on{background:linear-gradient(135deg,#ff7a1a,#d9420f);color:#1c0b2b;border-color:#ffb35c}.chip b{font-size:14px}.chip small{font-size:11px;opacity:.85}.chip .t{font-size:18px;font-weight:600}
+.chip .def{display:inline-block;margin-left:4px;width:10px;height:10px;vertical-align:0}
+.lhead{display:flex;align-items:center;justify-content:space-between;margin-top:12px}.lhead h2{margin:0}.lk{background:none;border:0;color:var(--mut);font:600 12px inherit;cursor:pointer;text-decoration:underline}
+.ed{display:flex;gap:4px;margin-top:6px}.ed button{background:#1d0c27;border:1px solid #8a4a1f;color:var(--ink);border-radius:8px;font:12px inherit;padding:3px 6px;cursor:pointer}.ed button.del{border-color:#ff4a3a;color:#ff9a7a}
+.chip.on .ed button{background:#fff1de;color:#1c0b2b}
+.savebtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#1d0c27;border:1.5px solid #ffb35c;color:#ffb35c;border-radius:12px;padding:6px 12px;font:600 13px inherit;cursor:pointer}.savebtn svg{width:18px;height:18px}.savebtn.saved{background:#ffb35c;color:#1c0b2b}
 .msg{text-align:center;color:var(--mut);padding:20px}.err{color:#ff9a7a}
 .foot{text-align:center;font-size:11px;color:var(--mut);margin-top:18px}.foot a{color:inherit}
 #inst[hidden],[hidden]{display:none!important}#ihelp{font-size:13px}
@@ -65,7 +73,7 @@ for(let i=0;i<9;i++){const d=document.createElement('div');d.className='lf';cons
 <svg class="sk" viewBox="0 0 60 100" style="animation-delay:-.2s"><g class="bod" fill="none" stroke="#f3ead8" stroke-width="3" stroke-linecap="round"><circle cx="30" cy="14" r="10" fill="#f3ead8"/><g fill="#2a0f3d" stroke="none"><circle cx="26" cy="13" r="2.6"/><circle cx="34" cy="13" r="2.6"/></g><path d="M27 19.5h6M28.5 19v2M31.5 19v2" stroke="#2a0f3d" stroke-width="1.2"/><path d="M30 24v28"/><path d="M23 32h14M24 37h12M25 42h10"/><path class="arm r" d="M26 30l-12 14l-4 10"/><path class="arm l" d="M34 30l12 14l4 10"/><path d="M24 54h12"/><path class="leg r" d="M26 54l-6 20l-6 2"/><path class="leg l" d="M34 54l6 20l6 2"/></g></svg>
 </div>
 <div class="card" id="ihelp" hidden></div>
-<div class="card"><form id="f"><input id="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="Enter your ZIP code" aria-label="ZIP code" autocomplete="postal-code"><button class="go">Go</button></form></div>
+<div class="card"><form id="f"><input id="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="Enter your ZIP code" aria-label="ZIP code" autocomplete="postal-code"><button class="go">Go</button></form><div class="lhead" id="lhead" hidden><h2>My places</h2><button class="lk" id="ledit" type="button">Edit</button></div><div class="locs" id="locs"></div></div>
 <div id="out"><p class="msg">Type your ZIP code to see your weather.</p></div>
 <p class="foot">Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Alerts: <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a> · ZIP lookup: Zippopotam.us</p>
 </div>
@@ -82,7 +90,7 @@ const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[
 const tm=s=>new Date(s).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 function greet(){const h=new Date().getHours();$('greet').textContent=h<12?'Good morning, Ashley':h<17?'Good afternoon, Ashley':'Good evening, Ashley'}greet();
 async function geo(zip){const r=await fetch('https://api.zippopotam.us/us/'+zip);if(!r.ok)throw new Error('ZIP code not found');const j=await r.json(),p=j.places[0];return{lat:+p.latitude,lon:+p.longitude,name:p['place name']+', '+p['state abbreviation']}}
-async function load(zip){$('out').innerHTML='<p class="msg">Loading your weather…</p>';
+let curZip=null;async function load(zip){curZip=zip;$('out').innerHTML='<p class="msg">Loading your weather…</p>';
  try{const g=await geo(zip);
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,is_day&hourly=temperature_2m,weather_code,precipitation_probability,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7`;
   const [w,al]=await Promise.all([fetch(u).then(r=>{if(!r.ok)throw new Error('Weather service unavailable');return r.json()}),fetch(`https://api.weather.gov/alerts/active?point=${g.lat.toFixed(4)},${g.lon.toFixed(4)}`,{headers:{Accept:'application/geo+json'}}).then(r=>r.ok?r.json():null).catch(()=>null)]);
@@ -99,9 +107,33 @@ function render(g,w,al,t){const c=w.current,d=w.daily,h=w.hourly,[cn,ck]=W[c.wea
  H+='<div class="card"><h2>7-day forecast</h2>';d.time.forEach((x,i)=>{const[nm,k]=W[d.weather_code[i]]||['','cloud'];const a=(d.temperature_2m_min[i]-lo)/sp*100,b=(d.temperature_2m_max[i]-lo)/sp*100;
   H+=`<div class="d"><b>${i===0?'Today':new Date(x+'T12:00').toLocaleDateString([], {weekday:'short'})}</b><span title="${nm}">${ic(k)}</span><span class="rp">${d.precipitation_probability_max[i]?d.precipitation_probability_max[i]+'%':''}</span><div><div class="rng"><span>${Math.round(d.temperature_2m_min[i])}°</span><b>${Math.round(d.temperature_2m_max[i])}°</b></div><div class="bar"><i style="left:${a}%;right:${100-b}%"></i></div></div></div>`});H+='</div>';
  H+=`<div class="card sun"><div><span class="sub">Sunrise</span><b>${tm(d.sunrise[0])}</b></div><div><span class="sub">Sunset</span><b>${tm(d.sunset[0])}</b></div><div><span class="sub">UV max</span><b>${Math.round(d.uv_index_max[0]??0)}</b></div></div>`;
- $('out').innerHTML=H}
+ $('out').innerHTML=H;if(window.onLoaded)onLoaded(curZip,g,w)}
 $('f').onsubmit=e=>{e.preventDefault();const z=$('zip').value.trim();if(!/^\d{5}$/.test(z)){$('out').innerHTML='<p class="msg err">Please enter a 5-digit ZIP code.</p>';return}localStorage.setItem(K,z);$('zip').blur();load(z)};
-const z0=localStorage.getItem(K);if(z0){$('zip').value=z0;load(z0)}
+
+const KL='aw.locs';let LOC=JSON.parse(localStorage.getItem(KL)||'null'),edit=false,curZ=null,curG=null;
+if(!LOC){LOC=[];const z=localStorage.getItem(K);if(z)LOC.push({zip:z});localStorage.setItem(KL,JSON.stringify(LOC))}
+const saveL=()=>localStorage.setItem(KL,JSON.stringify(LOC));
+const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="currentColor"/></svg>',STARO=STAR.replace('fill="currentColor"','fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"');
+function chips(){const L=$('locs');L.innerHTML='';$('lhead').hidden=!LOC.length;$('ledit').textContent=edit?'Done':'Edit';
+ LOC.forEach((l,i)=>{const c=document.createElement('div');c.className='chip'+(l.zip===curZ?' on':'');c.setAttribute('role','button');c.tabIndex=0;
+  c.innerHTML=`<b></b><small></small><span class="t">${l.temp!=null?Math.round(l.temp)+'°':''}</span>`;c.querySelector('b').textContent=(l.nick||l.name||l.zip);if(i===0)c.querySelector('b').insertAdjacentHTML('beforeend','<span class="def" title="Default">'+STAR+'</span>');
+  c.querySelector('small').textContent=l.nick?(l.name||l.zip):(i===0?'Default':l.zip);
+  if(edit){const e=document.createElement('div');e.className='ed';e.innerHTML=(i>0?'<button data-a="up" type="button">&#8592;</button><button data-a="def" type="button">Default</button>':'')+(i<LOC.length-1?'<button data-a="dn" type="button">&#8594;</button>':'')+'<button data-a="nick" type="button">Name</button><button data-a="del" class="del" type="button">Delete</button>';
+   e.onclick=ev=>{ev.stopPropagation();const a=ev.target.dataset.a;if(!a)return;
+    if(a==='up'){[LOC[i-1],LOC[i]]=[LOC[i],LOC[i-1]]}else if(a==='dn'){[LOC[i+1],LOC[i]]=[LOC[i],LOC[i+1]]}else if(a==='def'){LOC.unshift(LOC.splice(i,1)[0])}
+    else if(a==='nick'){const n=prompt('Nickname for '+(l.name||l.zip)+' (e.g. Home, Grandma). Leave blank to clear:',l.nick||'');if(n===null)return;l.nick=n.trim().slice(0,20)}
+    else if(a==='del'){if(!confirm('Delete '+(l.nick||l.name||l.zip)+' from your places?'))return;LOC.splice(i,1)}saveL();chips();sbtn()};c.appendChild(e)}
+  c.onclick=()=>{if(edit)return;$('zip').value=l.zip;localStorage.setItem(K,l.zip);load(l.zip)};c.onkeydown=e=>{if(e.key==='Enter')c.click()};L.appendChild(c)})}
+function sbtn(){const b=$('savebtn');if(!b)return;const s=LOC.some(l=>l.zip===curZ);b.className='savebtn'+(s?' saved':'');b.innerHTML=(s?STAR+'Saved':STARO+'Save location')}
+function onLoaded(zip,g,w){curZ=zip;curG=g;const l=LOC.find(x=>x.zip===zip);if(l){l.name=g.name;l.lat=g.lat;l.lon=g.lon;l.temp=w.current.temperature_2m;l.t=Date.now();saveL()}
+ const pl=document.querySelector('#out .place');if(pl&&!$('savebtn')){pl.insertAdjacentHTML('afterend','<button class="savebtn" id="savebtn" type="button"></button>');$('savebtn').onclick=()=>{const i=LOC.findIndex(x=>x.zip===curZ);
+  if(i>=0){if(!confirm('Remove '+(LOC[i].nick||LOC[i].name)+' from your places?'))return;LOC.splice(i,1)}else LOC.push({zip:curZ,name:curG.name,lat:curG.lat,lon:curG.lon,temp:w.current.temperature_2m,t:Date.now()});saveL();chips();sbtn()}}
+ sbtn();chips()}
+$('ledit').onclick=()=>{edit=!edit;chips()};
+async function temps(){const s=LOC.filter(l=>l.lat!=null&&(!l.t||Date.now()-l.t>6e5));if(!s.length)return;try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.map(l=>l.lat).join(',')}&longitude=${s.map(l=>l.lon).join(',')}&current=temperature_2m&temperature_unit=fahrenheit`);const j=await r.json();const a=Array.isArray(j)?j:[j];a.forEach((x,i)=>{s[i].temp=x.current.temperature_2m;s[i].t=Date.now()});saveL();chips()}catch(e){}}
+chips();temps();
+window.onLoaded=onLoaded;
+const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>6e5)load(localStorage.getItem(K))}});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/weather/sw.js',{scope:'/weather/'}).catch(()=>{});
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
