@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ashley's Weather</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#2a0f3d"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="My Weather">
-<style>
+<script>document.documentElement.dataset.theme=localStorage.getItem("aw.theme")||"dark"</script><style>
 :root{--bg1:#2a0f3d;--bg2:#120818;--ink:#fff1de;--mut:#e8b98a;--card:#2b1438d9;--acc:#ff7a1a;--sun:#ffb627}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg1),var(--bg2)) fixed;min-height:100vh;overflow-x:hidden}
 .app{max-width:520px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
@@ -45,11 +45,44 @@ h2{font:600 15px inherit;margin:0 0 10px;color:var(--mut);text-transform:upperca
 #leaves{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}.app{position:relative;z-index:1}
 .lf{position:absolute;top:-40px;width:22px;height:22px;animation:fall linear infinite}@keyframes fall{0%{transform:translate(0,-40px) rotate(0)}50%{transform:translate(40px,50vh) rotate(200deg)}100%{transform:translate(-20px,105vh) rotate(420deg)}}
 @media (prefers-reduced-motion:reduce){.sk *,.cat *,.pk *,.lf{animation:none!important}#leaves{display:none}}
-</style></head><body><div id="leaves" aria-hidden="true"></div><script>(()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=document.getElementById('leaves'),C=['#d9520f','#ff8a1f','#b8320f','#e8b030','#8a2a0a'];
+
+header{position:relative}.mb{position:absolute;right:0;top:50%;transform:translateY(-50%);width:42px;height:42px;padding:0;display:flex;align-items:center;justify-content:center}.mb svg{width:22px;height:22px}
+.menu{position:fixed;inset:0;background:#0007;z-index:20;display:none;justify-content:flex-end}.menu.on{display:flex}
+.mp{width:80%;max-width:320px;height:100%;background:linear-gradient(180deg,var(--bg1),var(--bg2));padding:18px 16px;box-shadow:-6px 0 22px #0006;animation:mslide .25s;overflow:auto}@keyframes mslide{from{transform:translateX(100%)}}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.mh b{font:600 22px Georgia,serif;color:#ffb35c}
+.mlab{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:6px 0}
+.thm{display:flex;gap:6px;margin-bottom:16px}.thm button{flex:1;padding:10px 2px;border-radius:12px;border:2px solid transparent;font:700 13px inherit;cursor:pointer}.thm button.on{border-color:var(--acc)}
+.thm [data-t=light]{background:#fff3e2;color:#5a2d0c}.thm [data-t=dark]{background:#2a0f3d;color:#fff1de}.thm [data-t=fun]{background:linear-gradient(135deg,#ff8a1f,#9b4dff,#9be22d);color:#fff}
+.mi{display:block;width:100%;text-align:left;background:var(--card);border:1px solid #ff7a1a33;color:var(--ink);border-radius:14px;padding:13px 14px;margin-bottom:8px;font:600 15px inherit;cursor:pointer}.mi small{display:block;font-weight:400;color:var(--mut);font-size:12px;margin-top:3px}
+#updBan{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:10px 18px;font:700 14px inherit;box-shadow:0 6px 18px #0005;cursor:pointer}
+.fdeco{display:none;position:fixed;pointer-events:none;z-index:0}[data-theme=fun] .fdeco{display:block}
+[data-theme=light]{--bg1:#fff4e4;--bg2:#ffd9b3;--ink:#3d220f;--mut:#9a5a2a;--card:#fffaf2e6;--acc:#e8661a}
+[data-theme=light] h1{color:#c4520f;text-shadow:none}[data-theme=light] .card{box-shadow:0 4px 16px #c4520f22;border-color:#e8661a33}
+[data-theme=light] .grid div,[data-theme=light] .h,[data-theme=light] .chip,[data-theme=light] .pickb{background:#ffe9d2}[data-theme=light] .d{border-color:#f0cfae}[data-theme=light] .bar{background:#f0d6bb}
+[data-theme=light] input,[data-theme=light] .ed button,[data-theme=light] .savebtn{background:#fff;color:#3d220f}[data-theme=light] .savebtn{color:#c4520f;border-color:#e8661a}[data-theme=light] .savebtn.saved{background:#e8661a;color:#fff}
+[data-theme=light] .chip.on{color:#fff}[data-theme=light] .h .rp,[data-theme=light] .d .rp{color:#2f6fbf}[data-theme=light] .alert{background:#ffe1c9;color:#4a2410}[data-theme=light] .alert details{color:#6a3a1a}
+[data-theme=light] .spook{background:linear-gradient(180deg,#3a1b4a,#2a0f3d);border-radius:18px;padding:6px 4px 0;height:104px}
+[data-theme=light] .ib{color:#fff}[data-theme=light] .mh b{color:#c4520f}[data-theme=light] .menu .mp{background:linear-gradient(180deg,#fff7ec,#ffe4c6)}
+[data-theme=fun]{--bg1:#ff8a1f;--bg2:#7b2ff2;--ink:#2b0b3d;--mut:#5b2a86;--card:#fff8eef2;--acc:#9b4dff}
+[data-theme=fun] body{background:linear-gradient(160deg,#ffb347 0%,#ff7ab6 35%,#9b4dff 70%,#7be22d 100%) fixed}
+[data-theme=fun] h1{color:#fff;text-shadow:2px 2px 0 #9b4dff,4px 4px 0 #2b0b3d}[data-theme=fun] h1 small{color:#fff}
+[data-theme=fun] .card{border-radius:28px;border:3px solid #fff;box-shadow:0 7px 0 #2b0b3d33,0 10px 24px #0003}
+[data-theme=fun] .grid div,[data-theme=fun] .h,[data-theme=fun] .chip,[data-theme=fun] .pickb{background:#f1e4ff;border-radius:20px}[data-theme=fun] .d{border-color:#e6d4ff}[data-theme=fun] .bar{background:#e6d4ff}
+[data-theme=fun] input{background:#fff;color:#2b0b3d;border-color:#9b4dff;border-radius:999px}[data-theme=fun] button.go,[data-theme=fun] .ib{border-radius:999px;background:#7be22d;color:#2b0b3d}
+[data-theme=fun] .chip.on{background:linear-gradient(135deg,#ff8a1f,#9b4dff);color:#fff}[data-theme=fun] .ed button,[data-theme=fun] .savebtn{background:#fff;color:#7b2ff2;border-color:#9b4dff}[data-theme=fun] .savebtn.saved{background:#9b4dff;color:#fff}
+[data-theme=fun] .h .rp,[data-theme=fun] .d .rp{color:#1f6fd6}[data-theme=fun] .alert{background:#fff0e0;color:#4a2410}[data-theme=fun] .alert details{color:#6a3a1a}
+[data-theme=fun] .spook{background:linear-gradient(180deg,#2b0b3d,#4a1670);border-radius:24px;padding:6px 4px 0;height:104px;border:3px solid #fff}
+[data-theme=fun] .mi{border-radius:999px;background:#fff;color:#2b0b3d}[data-theme=fun] .mh b{color:#fff}[data-theme=fun] .foot{color:#fff}
+.fb{animation:flap 1.6s ease-in-out infinite alternate}@keyframes flap{to{transform:translateY(-10px) rotate(6deg)}}
+[data-theme=light] .chip.on{background:linear-gradient(135deg,#ff8a3a,#e0560f);color:#fff;border-color:#e8661a}[data-theme=fun] .chip.on{background:linear-gradient(135deg,#ff8a1f,#9b4dff)}[data-theme=fun] h1 small{text-shadow:none;font-weight:600}[data-theme=fun] h1{text-shadow:2px 2px 0 #7b2ff2}
+</style></head><body><div class="fdeco fb" style="top:70px;left:6px"><svg viewBox="0 0 64 32" width="60"><path d="M32 10c-2-4-5-4-6 0-6-6-14-6-22 2 6 0 9 3 10 8 3-3 7-3 9 1 2-3 5-3 9-3 4 0 7 0 9 3 2-4 6-4 9-1 1-5 4-8 10-8-8-8-16-8-22-2-1-4-4-4-6 0z" fill="#2b0b3d"/><circle cx="29" cy="12" r="1.3" fill="#ffe14a"/><circle cx="35" cy="12" r="1.3" fill="#ffe14a"/></svg></div><div class="fdeco fb" style="top:200px;right:8px"><svg viewBox="0 0 64 32" width="44"><path d="M32 10c-2-4-5-4-6 0-6-6-14-6-22 2 6 0 9 3 10 8 3-3 7-3 9 1 2-3 5-3 9-3 4 0 7 0 9 3 2-4 6-4 9-1 1-5 4-8 10-8-8-8-16-8-22-2-1-4-4-4-6 0z" fill="#2b0b3d"/><circle cx="29" cy="12" r="1.3" fill="#ffe14a"/><circle cx="35" cy="12" r="1.3" fill="#ffe14a"/></svg></div><div class="fdeco" style="top:46%;left:4px"><svg viewBox="0 0 30 34" width="26"><path d="M15 2 28 32H2z" fill="#fff6e0"/><path d="M8.5 17h13L28 32H2z" fill="#ff8a1f"/><path d="M5 25h20l3 7H2z" fill="#ffd23f"/></svg></div><div class="fdeco" style="bottom:120px;right:10px"><svg viewBox="0 0 30 34" width="32"><path d="M15 2 28 32H2z" fill="#fff6e0"/><path d="M8.5 17h13L28 32H2z" fill="#ff8a1f"/><path d="M5 25h20l3 7H2z" fill="#ffd23f"/></svg></div><div class="fdeco" style="top:14px;right:70px"><svg viewBox="0 0 24 24" width="20"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#ffe14a"/></svg></div><div class="fdeco" style="bottom:40px;left:20px"><svg viewBox="0 0 24 24" width="26"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#7be22d"/></svg></div><div class="fdeco" style="top:60%;right:6px"><svg viewBox="0 0 24 24" width="16"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#fff"/></svg></div><div class="menu" id="menu"><div class="mp"><div class="mh"><b>Menu</b><button class="ib" id="menuX" type="button" aria-label="Close">Close</button></div>
+<div class="mlab">Theme</div><div class="thm" id="thm"><button data-t="light" type="button">Light</button><button data-t="dark" type="button">Dark</button><button data-t="fun" type="button">Fun</button></div>
+<button class="mi" id="inst" type="button">Install App<small id="ihelp" hidden></small></button>
+<button class="mi" id="chk" type="button">Check for Updates<small id="ver"></small></button></div></div><button id="updBan" type="button" hidden>Update available, tap to refresh</button><div id="leaves" aria-hidden="true"></div><script>(()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=document.getElementById('leaves'),C=['#d9520f','#ff8a1f','#b8320f','#e8b030','#8a2a0a'];
 for(let i=0;i<9;i++){const d=document.createElement('div');d.className='lf';const c=C[i%C.length];d.innerHTML=`<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2c3 4 9 5 9 11c-3-1-5 0-6 2c1 2 0 5-3 7c-3-2-4-5-3-7c-1-2-3-3-6-2c0-6 6-7 9-11z" fill="${c}" opacity=".85"/><path d="M12 6v16" stroke="#5a1a05" stroke-width="1"/></svg>`;
  d.style.left=(Math.random()*95)+'%';d.style.animationDuration=(10+Math.random()*10)+'s';d.style.animationDelay=(-Math.random()*20)+'s';const s=14+Math.random()*14;d.style.width=d.style.height=s+'px';L.appendChild(d)}})();</script>
 <div class="app">
-<header><h1>Ashley's Weather<small id="greet">Hello, Ashley</small></h1><button class="ib" id="inst" type="button">Install App</button></header>
+<header><h1>Ashley's Weather<small id="greet">Hello, Ashley</small></h1><button class="ib mb" id="menuBtn" type="button" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header>
 <div class="spook" aria-hidden="true">
 <svg class="sk" viewBox="0 0 60 100"><g class="bod" fill="none" stroke="#f3ead8" stroke-width="3" stroke-linecap="round"><circle cx="30" cy="14" r="10" fill="#f3ead8"/><g fill="#2a0f3d" stroke="none"><circle cx="26" cy="13" r="2.6"/><circle cx="34" cy="13" r="2.6"/><path d="M27 19h6"/></g><path d="M27 19.5h6M28.5 19v2M31.5 19v2" stroke="#2a0f3d" stroke-width="1.2"/>
 <path d="M30 24v28"/><path d="M23 32h14M24 37h12M25 42h10"/><path class="arm l" d="M26 30l-12 14l-4 10"/><path class="arm r" d="M34 30l12 14l4 10"/><path d="M24 54h12"/><path class="leg l" d="M26 54l-6 20l-6 2"/><path class="leg r" d="M34 54l6 20l6 2"/></g></svg>
@@ -155,8 +188,16 @@ chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>6e5)load(localStorage.getItem(K))}});
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/weather/sw.js',{scope:'/weather/'}).catch(()=>{});
+const VER='aw-v2';$('ver').textContent='Version '+VER;
+const setT=t=>{document.documentElement.dataset.theme=t;localStorage.setItem('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#fff4e4':t==='fun'?'#ff8a1f':'#2a0f3d'};
+setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b)setT(b.dataset.t)};
+$('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
+async function doUpd(){const v=$('ver');v.textContent='Updating...';try{const r=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration('/weather/');if(r){await r.update().catch(()=>{});if(r.waiting)r.waiting.postMessage('skip')}
+ if(window.caches)for(const k of await caches.keys())await caches.delete(k);const t=await (await fetch('/weather/sw.js?v='+Date.now(),{cache:'no-store'})).text();const lv=(t.match(/const C='([^']+)'/)||[])[1];
+ v.textContent=lv&&lv!==VER?'Updating to '+lv+'...':"You're on the latest version ("+VER+")";setTimeout(()=>location.reload(),1500)}catch(e){v.textContent='Could not check right now'}}
+$('chk').onclick=doUpd;$('updBan').onclick=doUpd;
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/weather/sw.js',{scope:'/weather/'}).then(r=>{const sh=()=>{if(navigator.serviceWorker.controller)$('updBan').hidden=false};if(r.waiting)sh();r.addEventListener('updatefound',()=>{const w=r.installing;w&&w.addEventListener('statechange',()=>{if(w.state==='installed')sh()})})}).catch(()=>{});
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
-if(matchMedia('(display-mode: standalone)').matches||navigator.standalone)$('inst').hidden=true;addEventListener('appinstalled',()=>$('inst').hidden=true);
-$('inst').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice.catch(()=>{});dp=null;return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);const b=$('ihelp');b.hidden=!b.hidden;b.textContent=ios?'In Safari: tap Share (square with arrow) → "Add to Home Screen" → Add.':'Open the browser menu (⋮) → "Install app" or "Add to Home screen".'};
+addEventListener('appinstalled',()=>localStorage.setItem('aw.installed','1'));
+$('inst').onclick=async()=>{const b0=$('ihelp');if(matchMedia('(display-mode: standalone)').matches||navigator.standalone||(!dp&&localStorage.getItem('aw.installed'))){b0.hidden=false;b0.textContent='Already installed on this phone. You are all set.';return}if(dp){dp.prompt();await dp.userChoice.catch(()=>{});dp=null;return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);const b=$('ihelp');b.hidden=!b.hidden;b.textContent=ios?'In Safari: tap Share (square with arrow) → "Add to Home Screen" → Add.':'Open the browser menu (⋮) → "Install app" or "Add to Home screen".'};
 </script></body></html>
