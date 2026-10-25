@@ -4,3 +4,4 @@ self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.al
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET'||new URL(r.url).origin!==location.origin)return;
  e.respondWith(fetch(r,{cache:'no-cache'}).then(res=>{if(res.ok){const cp=res.clone();caches.open(C).then(c=>c.put(r,cp))}return res}).catch(()=>caches.match(r).then(m=>m||caches.match('/weather/'))))});
 self.addEventListener('message',e=>{if(e.data==='skip')self.skipWaiting()});
+// holiday-icons: fall 2026-10-25
