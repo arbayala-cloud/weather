@@ -72,7 +72,7 @@ textarea{width:100%;min-height:100px;border-radius:14px;border:1.5px solid var(-
 .ab svg{width:24px;height:24px;flex:0 0 24px}.ab .at{flex:1;min-width:0}.ab b{display:block;font-size:15px}.ab small{display:block;font-size:12px;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ab.lw{background:#b3261e;color:#fff}.ab.lh{background:#d9661a;color:#fff}.ab.la{background:#f2c037;color:#2a2205}
 .alx{border-left:5px solid #f2c037;padding-left:12px}.alx.lw{border-color:#e5483e}.alx.lh{border-color:#f08a3a}.alx h4{margin:0 0 4px;font-size:17px}.alx .sub{font-size:13px}.alx p{white-space:pre-wrap;font-size:14px;margin:8px 0}.alx .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-top:10px}
-</style></head><body><div class="menu" id="menu"><div class="mp" role="dialog" aria-label="Menu">
+.moon .mrow{display:flex;align-items:center;gap:16px}.moonsvg{width:84px;height:84px;flex:0 0 84px;filter:drop-shadow(0 0 10px #f1ead233)}.grid.g1{grid-template-columns:1fr;margin-top:10px}[data-theme=light] .moonsvg circle:first-child{fill:#c9d5e6}</style></head><body><div class="menu" id="menu"><div class="mp" role="dialog" aria-label="Menu">
 <div class="mhd"><div><div class="mtitle">My Weather</div><div class="msync" id="mhSync"><span class="dot"></span><span class="dst">Saved on this phone</span></div></div><button class="ib mx" id="menuX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <div class="msec"><div class="msh">Weather</div>
 <button class="mi" id="mRef" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></span><span class="mtx">Refresh now<small>Get the latest conditions</small></span></button>
@@ -112,6 +112,39 @@ function ic(k,night){const sun=night?'<path d="M30 10a14 14 0 1 0 14 18a11 11 0 
  snow:CL+'<g fill="#8cc2f0"><circle cx="24" cy="55" r="2.5"/><circle cx="34" cy="58" r="2.5"/><circle cx="44" cy="55" r="2.5"/></g>',storm:CL+'<path d="M34 48l-6 10h6l-4 8 10-12h-6l4-6z" fill="#ffc94a" stroke="#e0a020" stroke-width="1"/>'};
  return '<svg viewBox="0 0 64 64" aria-hidden="true">'+(S[k]||S.cloud)+'</svg>'}
 function ago(t){t=+t;if(!t||!isFinite(t)||t>Date.now()+864e5)return'not yet';const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' hr ago':Math.round(m/1440)+' days ago'}
+// ---- Moon (math adapted from SunCalc by Vladimir Agafonkin, BSD-2/MIT-style license) ----
+const MOON=(()=>{const PI=Math.PI,rad=PI/180,sin=Math.sin,cos=Math.cos,tan=Math.tan,asin=Math.asin,atan=Math.atan2,acos=Math.acos,dayMs=864e5,J1970=2440588,J2000=2451545,e=rad*23.4397;
+ const toDays=t=>t/dayMs-0.5+J1970-J2000;
+ const ra=(l,b)=>atan(sin(l)*cos(e)-tan(b)*sin(e),cos(l)),dec=(l,b)=>asin(sin(b)*cos(e)+cos(b)*sin(e)*sin(l));
+ const alt=(H,phi,d)=>asin(sin(phi)*sin(d)+cos(phi)*cos(d)*cos(H)),sid=(d,lw)=>rad*(280.16+360.9856235*d)-lw;
+ const sunC=d=>{const M=rad*(357.5291+0.98560028*d),C=rad*(1.9148*sin(M)+0.02*sin(2*M)+0.0003*sin(3*M)),L=M+C+rad*102.9372+PI;return{dec:dec(L,0),ra:ra(L,0)}};
+ const moonC=d=>{const L=rad*(218.316+13.176396*d),M=rad*(134.963+13.064993*d),F=rad*(93.272+13.229350*d),l=L+rad*6.289*sin(M),b=rad*5.128*sin(F),dt=385001-20905*cos(M);return{ra:ra(l,b),dec:dec(l,b),dist:dt}};
+ function illum(t){const d=toDays(t),s=sunC(d),m=moonC(d),sd=149598000,phi=acos(sin(s.dec)*sin(m.dec)+cos(s.dec)*cos(m.dec)*cos(s.ra-m.ra)),inc=atan(sd*sin(phi),m.dist-sd*cos(phi)),an=atan(cos(s.dec)*sin(s.ra-m.ra),sin(s.dec)*cos(m.dec)-cos(s.dec)*sin(m.dec)*cos(s.ra-m.ra));
+  return{f:(1+cos(inc))/2,p:0.5+0.5*inc*(an<0?-1:1)/PI}}
+ function mAlt(t,lat,lng){const lw=rad*-lng,phi=rad*lat,d=toDays(t),c=moonC(d),H=sid(d,lw)-c.ra;let h=alt(H,phi,c.dec);h+=rad*0.017/tan(h+rad*10.26/(h+rad*5.10));return h}
+ function times(t0,lat,lng){const hc=0.133*rad,H=h=>t0+h*36e5;let h0=mAlt(t0,lat,lng)-hc,rise,set,ye;
+  for(let i=1;i<=24;i+=2){const h1=mAlt(H(i),lat,lng)-hc,h2=mAlt(H(i+1),lat,lng)-hc,a=(h0+h2)/2-h1,b=(h2-h0)/2,xe=-b/(2*a),D=b*b-4*a*h1;ye=(a*xe+b)*xe+h1;let r=0,x1=0,x2=0;
+   if(D>=0){const dx=Math.sqrt(D)/(Math.abs(a)*2);x1=xe-dx;x2=xe+dx;if(Math.abs(x1)<=1)r++;if(Math.abs(x2)<=1)r++;if(x1<-1)x1=x2}
+   if(r===1){if(h0<0)rise=i+x1;else set=i+x1}else if(r===2){rise=i+(ye<0?x2:x1);set=i+(ye<0?x1:x2)}if(rise!=null&&set!=null)break;h0=h2}
+  return{rise:rise!=null?H(rise):null,set:set!=null?H(set):null,up:rise==null&&set==null&&ye>0}}
+ function phaseJDE(k,full){const T=k/1236.85,r=Math.PI/180,s=x=>Math.sin(x*r);let J=2451550.09766+29.530588861*k+0.00015437*T*T-0.00000015*T*T*T+0.00000000073*T**4;
+  const E=1-0.002516*T-0.0000074*T*T,M=2.5534+29.1053567*k-0.0000014*T*T,Mp=201.5643+385.81693528*k+0.0107582*T*T,F=160.7108+390.67050284*k-0.0016118*T*T,O=124.7746-1.56375588*k+0.0020672*T*T;
+  const c=full?[-0.40614,0.17302*E,0.01614,0.01043,0.00734*E,-0.00515*E,0.00209*E*E,-0.00111,-0.00057,0.00056*E,-0.00042,0.00042*E,0.00038*E,-0.00024*E,-0.00017,-0.00007,0.00004,0.00004,0.00003,0.00003,-0.00003,0.00003,-0.00002,-0.00002,0.00002]:[-0.40720,0.17241*E,0.01608,0.01039,0.00739*E,-0.00514*E,0.00208*E*E,-0.00111,-0.00057,0.00056*E,-0.00042,0.00042*E,0.00038*E,-0.00024*E,-0.00017,-0.00007,0.00004,0.00004,0.00003,0.00003,-0.00003,0.00003,-0.00002,-0.00002,0.00002];
+  const a=[Mp,M,2*Mp,2*F,Mp-M,Mp+M,2*M,Mp-2*F,Mp+2*F,2*Mp+M,3*Mp,M+2*F,M-2*F,2*Mp-M,O,Mp+2*M,2*Mp-2*F,3*M,Mp+M-2*F,2*Mp+2*F,Mp+M+2*F,Mp-M+2*F,Mp-M-2*F,3*Mp+M,4*Mp];
+  for(let i=0;i<25;i++)J+=c[i]*s(a[i]);return(J-2440587.5)*864e5}
+ function next(t,target){const full=target===0.5;let k=Math.floor(((t/864e5+2440587.5)-2451550.09766)/29.530588861)-1;k+=full?0.5:0;for(let i=0;i<4;i++,k++){const x=phaseJDE(k,full);if(x>t)return x}return null}
+ const name=(p,f)=>{if(f<0.02)return'New Moon';if(f>0.98)return'Full Moon';const wax=p<0.5;if(Math.abs(f-0.5)<0.04)return wax?'First Quarter':'Last Quarter';return(f<0.5?(wax?'Waxing Crescent':'Waning Crescent'):(wax?'Waxing Gibbous':'Waning Gibbous'))};
+ function svg(p,f){const r=40,c=50,wax=p<0.5,k=1-2*f,rx=Math.abs(k)*r;// terminator ellipse
+  const lit=wax?1:0,sweepOuter=wax?1:0,sweepIn=k>0?(wax?0:1):(wax?1:0);
+  const d=`M${c} ${c-r} A${r} ${r} 0 0 ${sweepOuter} ${c} ${c+r} A${rx} ${r} 0 0 ${sweepIn} ${c} ${c-r}Z`;
+  return `<svg viewBox="0 0 100 100" class="moonsvg" role="img" aria-label="Moon ${Math.round(f*100)}% lit"><circle cx="${c}" cy="${c}" r="${r}" fill="#24324d" stroke="#8fa3c2" stroke-width="1.2"/>${f<0.005?'':f>0.995?`<circle cx="${c}" cy="${c}" r="${r}" fill="#f1ead2"/>`:`<path d="${d}" fill="#f1ead2"/>`}<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#8fa3c2" stroke-width="1.2" opacity=".6"/></svg>`}
+ return{illum,times,next,name,svg}})();
+function moonCard(g,w){try{const now=Date.now(),{f,p}=MOON.illum(now),off=(w.utc_offset_seconds||0)*1000,tz=w.timezone,loc=new Date(now+off),t0=Date.UTC(loc.getUTCFullYear(),loc.getUTCMonth(),loc.getUTCDate())-off;
+ const mt=MOON.times(t0,g.lat,g.lon),T=t=>t?new Date(t).toLocaleTimeString([], {hour:'numeric',minute:'2-digit',timeZone:tz}):'None today',D=t=>t?new Date(t).toLocaleDateString([], {weekday:'short',month:'short',day:'numeric',timeZone:tz}):'';
+ const nf=MOON.next(now,0.5),nn=MOON.next(now,0);
+ return `<div class="card moon"><h2>Moon</h2><div class="mrow">${MOON.svg(p,f)}<div><div class="cond">${MOON.name(p,f)}</div><div class="sub">${Math.round(f*100)}% illuminated</div></div></div>
+ <div class="grid"><div><b>${T(mt.rise)}</b><span>Moonrise</span></div><div><b>${T(mt.set)}</b><span>Moonset</span></div><div><b>${D(nf)}</b><span>Full moon</span></div></div><div class="grid g1"><div><b>${D(nn)}</b><span>Next new moon</span></div></div></div>`}catch(e){return''}}
+
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const tm=s=>new Date(s).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 function greet(){const h=new Date().getHours();$('greet').textContent=h<12?'Good morning, Ashley':h<17?'Good afternoon, Ashley':'Good evening, Ashley'}greet();
@@ -139,7 +172,7 @@ function render(g,w,al,t){const c={...w.current},o=w.cur;if(o){c.temperature_2m=
  const lo=Math.min(...d.temperature_2m_min),hi=Math.max(...d.temperature_2m_max),sp=hi-lo||1;
  H+='<div class="card"><h2>7-day forecast</h2>';d.time.forEach((x,i)=>{const[nm,k]=W[d.weather_code[i]]||['','cloud'];const a=(d.temperature_2m_min[i]-lo)/sp*100,b=(d.temperature_2m_max[i]-lo)/sp*100;
   H+=`<div class="d"><b>${i===0?'Today':new Date(x+'T12:00').toLocaleDateString([], {weekday:'short'})}</b><span title="${nm}">${ic(k)}</span><span class="rp">${d.precipitation_probability_max[i]?d.precipitation_probability_max[i]+'%':''}</span><div><div class="rng"><span>${Math.round(d.temperature_2m_min[i])}°</span><b>${Math.round(d.temperature_2m_max[i])}°</b></div><div class="bar"><i style="left:${a}%;right:${100-b}%"></i></div></div></div>`});H+='</div>';
- H+=`<div class="card sun"><div><span class="sub">Sunrise</span><b>${tm(d.sunrise[0])}</b></div><div><span class="sub">Sunset</span><b>${tm(d.sunset[0])}</b></div><div><span class="sub">UV max</span><b>${Math.round(d.uv_index_max[0]??0)}</b></div></div>`;
+ H+=`<div class="card sun"><div><span class="sub">Sunrise</span><b>${tm(d.sunrise[0])}</b></div><div><span class="sub">Sunset</span><b>${tm(d.sunset[0])}</b></div><div><span class="sub">UV max</span><b>${Math.round(d.uv_index_max[0]??0)}</b></div></div>`;H+=moonCard(g,w);
  $('out').innerHTML=H;if(window.onLoaded)onLoaded(curZip,g,w)}
 const ST={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico'},AB=Object.fromEntries(Object.entries(ST).map(([k,v])=>[v.toLowerCase(),k]));
 const isUS=r=>r.country_code==='US';const lab=r=>{if(isUS(r)){const s=AB[(r.admin1||'').toLowerCase()];return r.name+(s?', '+s:'')}return [r.name,r.admin1&&r.admin1!==r.name?r.admin1:'',r.country].filter(Boolean).join(', ')};
@@ -197,7 +230,7 @@ chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>3e5)load(localStorage.getItem(K))}});
-const VER='aw-v6';$('ver').textContent='Version '+VER;
+const VER='aw-v7';$('ver').textContent='Version '+VER;
 const setT=t=>{document.documentElement.dataset.theme=t;safeSet('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#e9f2fc':t==='fun'?'#6fc3ff':'#1d3557'};
 setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b){setT(b.dataset.t);safeSet('aw.theme.set','1');wxIdbPut();window.wxLater&&wxLater()}};
 $('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
