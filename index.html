@@ -67,6 +67,11 @@ textarea{width:100%;min-height:100px;border-radius:14px;border:1.5px solid var(-
 [data-theme=fun] body{background:linear-gradient(160deg,#6fd3ff 0%,#8f7bff 55%,#ffb86b 100%) fixed}[data-theme=fun] h1{text-shadow:0 2px 0 #5a3fd6}[data-theme=fun] h1 small{color:#fff}[data-theme=fun] .foot{color:#fff}
 [data-theme=fun] .card{border-radius:26px;border:2px solid #fff}[data-theme=fun] .h .rp,[data-theme=fun] .d .rp{color:#1f6fd6}[data-theme=fun] .alert{background:#fff4e0;color:#4a3410}[data-theme=fun] input,[data-theme=fun] textarea{background:#fff}[data-theme=fun] h1 small{text-shadow:0 1px 2px #3a2a9a99}[data-theme=fun] .mp{background:#f7f4ff}[data-theme=fun] .mtitle,[data-theme=fun] .ph h3{color:#4b33c4}[data-theme=fun] .err{color:#c0392b}
 
+
+#alb{margin:0 0 4px}.ab{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:14px;padding:11px 12px;margin:8px 0;font:14px -apple-system,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 12px #0003}
+.ab svg{width:24px;height:24px;flex:0 0 24px}.ab .at{flex:1;min-width:0}.ab b{display:block;font-size:15px}.ab small{display:block;font-size:12px;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ab.lw{background:#b3261e;color:#fff}.ab.lh{background:#d9661a;color:#fff}.ab.la{background:#f2c037;color:#2a2205}
+.alx{border-left:5px solid #f2c037;padding-left:12px}.alx.lw{border-color:#e5483e}.alx.lh{border-color:#f08a3a}.alx h4{margin:0 0 4px;font-size:17px}.alx .sub{font-size:13px}.alx p{white-space:pre-wrap;font-size:14px;margin:8px 0}.alx .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-top:10px}
 </style></head><body><div class="menu" id="menu"><div class="mp" role="dialog" aria-label="Menu">
 <div class="mhd"><div><div class="mtitle">My Weather</div><div class="msync" id="mhSync"><span class="dot"></span><span class="dst">Saved on this phone</span></div></div><button class="ib mx" id="menuX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <div class="msec"><div class="msh">Weather</div>
@@ -81,6 +86,7 @@ textarea{width:100%;min-height:100px;border-radius:14px;border:1.5px solid var(-
 <button class="mi" id="chk" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></span><span class="mtx">Check for updates<small id="ver"></small></span></button></div>
 <div class="mft"><div class="mfl"><a href="privacy.html">Privacy</a><span>·</span><a href="terms.html">Terms</a></div><div class="mfv" id="mVer"></div><div class="mcr">Made for Ashley</div><div id="syFoot" style="display:none"></div></div>
 </div></div>
+<div class="page" id="pgAl"><div class="ph"><h3>Weather alerts</h3><button class="ib" type="button" data-close>Done</button></div><div id="alBody"></div><p class="tiny">From the National Weather Service. For emergencies follow local officials.</p></div>
 <div class="page" id="pgSync"><div class="ph"><h3>Sync with Google</h3><button class="ib" type="button" data-close>Done</button></div>
 <div class="card"><p id="syStat" style="margin-top:0"></p><div class="row" id="syOut"><button class="btn" id="syIn" type="button">Sign in with Google</button></div><div class="row" id="syInRow" style="display:none"><button class="btn" id="syNow" type="button">Sync now</button><button class="btn alt" id="syOff" type="button">Sign out</button></div>
 <p class="tiny">Your saved places and theme are stored in a private app folder in your own Google Drive. Syncing only adds; it never wipes places.</p></div></div>
@@ -92,7 +98,7 @@ textarea{width:100%;min-height:100px;border-radius:14px;border:1.5px solid var(-
 <div class="app">
 <header><h1>Ashley's Weather<small id="greet">Hello, Ashley</small></h1><button class="ib mb" id="menuBtn" type="button" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header>
 <div class="card" id="ihelp" hidden></div>
-<div class="card"><form id="f"><input id="zip" placeholder="City or ZIP" aria-label="City or ZIP" autocomplete="off" enterkeyhint="search"><button class="go">Go</button></form><div class="lhead" id="lhead" hidden><h2>My places</h2><button class="lk" id="ledit" type="button">Edit</button></div><div class="locs" id="locs"></div></div>
+<div id="alb" aria-live="polite"></div><div class="card"><form id="f"><input id="zip" placeholder="City or ZIP" aria-label="City or ZIP" autocomplete="off" enterkeyhint="search"><button class="go">Go</button></form><div class="lhead" id="lhead" hidden><h2>My places</h2><button class="lk" id="ledit" type="button">Edit</button></div><div class="locs" id="locs"></div></div>
 <div id="out"><p class="msg">Type a city or ZIP code to see your weather.</p></div>
 <p class="foot">Forecast: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Current conditions &amp; alerts: <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a> · ZIP lookup: Zippopotam.us</p>
 </div>
@@ -124,7 +130,7 @@ let curZip=null;async function load(zip){curZip=zip;$('out').innerHTML='<p class
   w.cur=g.cc==='US'?await nwsNow(g).catch(()=>null):null;safeSet(KC,JSON.stringify({zip,g,w,al,t:Date.now()}));render(g,w,al,Date.now())}
  catch(e){const c=JSON.parse(localStorage.getItem(KC)||'null');if(c&&c.zip===zip){render(c.g,c.w,c.al,c.t);$('out').insertAdjacentHTML('afterbegin','<p class="msg err">Offline — showing last saved weather.</p>')}else $('out').innerHTML='<p class="msg err">'+esc(e.message||'Something went wrong')+'. Check it and try again.</p>'}}
 function render(g,w,al,t){const c={...w.current},o=w.cur;if(o){c.temperature_2m=o.temp;c.apparent_temperature=o.feels;if(o.hum!=null)c.relative_humidity_2m=Math.round(o.hum);if(o.wind!=null){c.wind_speed_10m=o.wind;c.wind_gusts_10m=o.gust??o.wind}}const c0=c,d=w.daily,h=w.hourly,[cn,ck]=W[c.weather_code]||['—','cloud'];let H='';
- (al&&al.features||[]).forEach(f=>{const p=f.properties;H+=`<div class="alert ${/Severe|Extreme/.test(p.severity)?'sev':''}"><b>Alert: ${esc(p.event)}</b><span class="sub">${esc(p.headline||'')}</span><details><summary>Details</summary>${esc((p.description||'')+(p.instruction?'\n\n'+p.instruction:''))}</details></div>`});
+ if(window.alSet){const sv=LOC.find(x=>x.zip===curZip);alSet('cur',sv&&sv.nick||g.name,al)}
  H+=`<div class="card"><div class="place">${esc(g.name)}</div><div class="upd">${w.timezone&&w.timezone!==Intl.DateTimeFormat().resolvedOptions().timeZone?'Local time '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit',timeZone:w.timezone})+' · ':''}<span data-t="${t}">Updated ${ago(t)}</span></div>
  <div class="now"><div class="ic">${ic(ck,!c.is_day)}</div><div><div class="big">${Math.round(c.temperature_2m)}°</div><div class="cond">${o&&o.text?esc(o.text):cn}</div><div class="sub">Feels like ${Math.round(c.apparent_temperature)}° · H ${Math.round(d.temperature_2m_max[0])}° L ${Math.round(d.temperature_2m_min[0])}°</div></div></div>
  <div class="upd" style="margin-top:8px">${o?'Now: observed at '+esc(o.st)+' ('+ago(o.ts)+')':'Now: forecast model (Open-Meteo)'}</div><div class="grid"><div><b>${Math.round(c.wind_speed_10m)} mph</b><span>Wind${c.wind_gusts_10m>c.wind_speed_10m+5?' · gusts '+Math.round(c.wind_gusts_10m):''}</span></div><div><b>${c.relative_humidity_2m}%</b><span>Humidity</span></div><div><b>${d.precipitation_probability_max[0]??0}%</b><span>Rain chance</span></div></div></div>`;
@@ -191,7 +197,7 @@ chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>3e5)load(localStorage.getItem(K))}});
-const VER='aw-v5';$('ver').textContent='Version '+VER;
+const VER='aw-v6';$('ver').textContent='Version '+VER;
 const setT=t=>{document.documentElement.dataset.theme=t;safeSet('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#e9f2fc':t==='fun'?'#6fc3ff':'#1d3557'};
 setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b){setT(b.dataset.t);safeSet('aw.theme.set','1');wxIdbPut();window.wxLater&&wxLater()}};
 $('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
@@ -204,6 +210,29 @@ if('serviceWorker' in navigator)navigator.serviceWorker.register('/weather/sw.js
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
 addEventListener('appinstalled',()=>localStorage.setItem('aw.installed','1'));
 $('inst').onclick=async()=>{const b0=$('ihelp');if(matchMedia('(display-mode: standalone)').matches||navigator.standalone||(!dp&&localStorage.getItem('aw.installed'))){b0.hidden=false;b0.textContent='Already installed on this phone. You are all set.';return}if(dp){dp.prompt();await dp.userChoice.catch(()=>{});dp=null;return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);const b=$('ihelp');b.hidden=!b.hidden;b.textContent=ios?'In Safari: tap Share (square with arrow) → "Add to Home Screen" → Add.':'Open the browser menu (⋮) → "Install app" or "Add to Home screen".'};
+
+// ---- Severe weather alerts (NWS) for every saved US place + the one on screen ----
+(function(){const $=id=>document.getElementById(id),AL={};
+ const TRI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>';
+ const lvl=e=>/Warning|Emergency/i.test(e)?'lw':/Watch/i.test(e)?'lh':'la',rank={lw:0,lh:1,la:2};
+ const when=t=>t?new Date(t).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'';
+ window.alSet=(key,name,j)=>{AL[key]={name,list:((j&&j.features)||[]).map(f=>f.properties).filter(p=>p&&p.event&&(!p.expires||Date.parse(p.ends||p.expires)>Date.now()))};draw()};
+ function all(){const m=new Map();Object.values(AL).forEach(({name,list})=>list.forEach(p=>{const k=p.id||p['@id']||p.event+p.headline;const x=m.get(k);if(x){if(!x.places.includes(name))x.places.push(name)}else m.set(k,{p,places:[name]})}));
+  return[...m.values()].sort((a,b)=>rank[lvl(a.p.event)]-rank[lvl(b.p.event)])}
+ function draw(){const A=all(),B=$('alb');B.innerHTML='';A.forEach((x,i)=>{const p=x.p,b=document.createElement('button');b.type='button';b.className='ab '+lvl(p.event);
+  b.innerHTML=TRI+'<span class="at"><b></b><small></small></span>';b.querySelector('b').textContent=p.event+' · '+x.places.join(', ');b.querySelector('small').textContent=(p.ends||p.expires)?'Until '+when(p.ends||p.expires):(p.headline||'');b.onclick=()=>show(i);B.appendChild(b)})}
+ function show(i){const A=all(),D=$('alBody');D.innerHTML='';A.forEach((x,j)=>{const p=x.p,c=document.createElement('div');c.className='card alx '+lvl(p.event);
+  c.innerHTML='<h4></h4><div class="sub"></div><div class="lab">Places</div><p class="pl"></p><div class="lab">Expires</div><p class="ex"></p><div class="lab">Details</div><p class="ds"></p><div class="lab ilab">What to do</div><p class="in"></p>';
+  c.querySelector('h4').textContent=p.event;c.querySelector('.sub').textContent=p.headline||'';c.querySelector('.pl').textContent=x.places.join(', ')+(p.areaDesc?' ('+p.areaDesc+')':'');c.querySelector('.ex').textContent=when(p.ends||p.expires)||'Not stated';
+  c.querySelector('.ds').textContent=p.description||'';if(p.instruction)c.querySelector('.in').textContent=p.instruction;else{c.querySelector('.ilab').remove();c.querySelector('.in').remove()}D.appendChild(c);if(j===i)setTimeout(()=>c.scrollIntoView({block:'start'}),50)});
+  $('pgAl').classList.add('on')}
+ async function one(l){const r=await fetch(`https://api.weather.gov/alerts/active?point=${(+l.lat).toFixed(4)},${(+l.lon).toFixed(4)}`,{headers:{Accept:'application/geo+json'}});if(!r.ok)throw 0;return r.json()}
+ const isUSloc=l=>l.lat!=null&&(/^\d{5}$/.test(l.zip)||/\|US$/.test(l.zip));
+ window.alertsAll=async()=>{const S=LOC.filter(isUSloc);Object.keys(AL).forEach(k=>{if(k!=='cur'&&!S.some(l=>l.zip===k))delete AL[k]});
+  await Promise.all(S.map(l=>one(l).then(j=>{AL[l.zip]={name:l.nick||l.name||l.zip,list:j.features.map(f=>f.properties).filter(p=>p&&p.event)}}).catch(()=>{})));draw()};
+ alertsAll();setInterval(()=>{if(!document.hidden)alertsAll()},12*60000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)alertsAll()});
+})();
 // ---- Menu pages ----
 (function(){const $=id=>document.getElementById(id);const cm=()=>$('menu').classList.remove('on');
  const pg=id=>{cm();$(id).classList.add('on')};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.page').classList.remove('on'));
