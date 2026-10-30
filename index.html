@@ -1,140 +1,133 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ashley's Weather</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#2a0f3d"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-180.png">
+<title>Ashley's Weather</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1d3557"><link rel="icon" href="icons/icon-192.png" type="image/png"><link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="My Weather">
 <script>document.documentElement.dataset.theme=localStorage.getItem("aw.theme")||"dark"</script><style>
-:root{--bg1:#2a0f3d;--bg2:#120818;--ink:#fff1de;--mut:#e8b98a;--card:#2b1438d9;--acc:#ff7a1a;--sun:#ffb627}
+:root{--bg1:#1d3557;--bg2:#0f1c33;--ink:#f3f6fb;--mut:#a9b8cf;--card:#1b2b47e6;--card2:#24375a;--acc:#4f9be8;--line:#2d4166;--title:#ffffff;--chipon:#4f9be8;--chipink:#fff}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg1),var(--bg2)) fixed;min-height:100vh;overflow-x:hidden}
 .app{max-width:520px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}header img{width:40px;height:40px;border-radius:12px;box-shadow:0 0 14px #ff7a1a66}
-h1{color:#ffb35c;text-shadow:0 0 10px #ff7a1a88;font:600 22px/1.1 Georgia,"Times New Roman",serif;margin:0;flex:1;text-align:center}h1 small{display:block;font:13px -apple-system,system-ui,sans-serif;color:var(--mut);margin-top:3px}
-.ib{background:#ff7a1a;color:#1c0b2b;border:0;border-radius:12px;padding:8px 11px;font:600 13px inherit;color:var(--ink);cursor:pointer;box-shadow:0 1px 4px #0001}
-.card{background:var(--card);border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 4px 18px #0006;border:1px solid #ff7a1a33;backdrop-filter:blur(6px)}
-form{display:flex;gap:8px}input{flex:1;font-size:17px;padding:12px 14px;border:1.5px solid #8a4a1f;border-radius:14px;background:#1d0c27;color:var(--ink);min-width:0}input:focus{outline:2px solid var(--acc);border-color:transparent}
-button.go{background:var(--acc);color:#fff;border:0;border-radius:14px;padding:0 18px;font:600 16px inherit;cursor:pointer}
-.place{font-weight:600;font-size:16px}.upd{color:var(--mut);font-size:12px}
-.now{display:flex;align-items:center;gap:12px}.now .big{font:300 72px/1 -apple-system,system-ui,sans-serif;letter-spacing:-2px}.now .ic{font-size:0}.now .ic svg{width:92px;height:92px}
+header{display:flex;align-items:center;gap:10px;margin:2px 0 14px;position:relative;min-height:46px}
+h1{color:var(--title);font:600 23px/1.1 Georgia,"Times New Roman",serif;margin:0;flex:1;text-align:center;letter-spacing:.01em}h1 small{display:block;font:13px -apple-system,system-ui,sans-serif;color:var(--mut);margin-top:4px;letter-spacing:0}
+.ib{background:var(--card2);color:var(--ink);border:0;border-radius:12px;padding:8px 11px;font:600 13px -apple-system,system-ui,sans-serif;cursor:pointer}
+.card{background:var(--card);border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 4px 18px #0003;border:1px solid var(--line)}
+form{display:flex;gap:8px}input{flex:1;font-size:17px;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg2);color:var(--ink);min-width:0}input:focus{outline:2px solid var(--acc);border-color:transparent}
+button.go{background:var(--acc);color:#fff;border:0;border-radius:14px;padding:0 18px;min-height:46px;font:600 16px -apple-system,system-ui,sans-serif;cursor:pointer}
+.place{font-weight:600;font-size:17px}.upd{color:var(--mut);font-size:12px;margin-top:2px}
+.now{display:flex;align-items:center;gap:12px;margin-top:6px}.now .big{font:300 72px/1 -apple-system,system-ui,sans-serif;letter-spacing:-2px}.now .ic{font-size:0}.now .ic svg{width:92px;height:92px}
 .cond{font-size:18px;font-weight:600}.sub{color:var(--mut)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.grid div{background:#3a1b4a;border-radius:14px;padding:9px;text-align:center}.grid b{display:block;font-size:16px}.grid span{font-size:12px;color:var(--mut)}
-h2{font:600 15px inherit;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;font-size:12px}
-.hours{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}.hours::-webkit-scrollbar{height:4px}.hours::-webkit-scrollbar-thumb{background:#ff7a1a;border-radius:4px}
-.h{flex:0 0 64px;text-align:center;background:#3a1b4a;border-radius:14px;padding:8px 4px;scroll-snap-align:start}.h svg{width:32px;height:32px}.h b{display:block}.h small{color:var(--mut);font-size:11px;display:block}.h .rp{color:#a9c8ff}
-.d{display:grid;grid-template-columns:54px 34px 44px 1fr;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #4a2a5a}.d:first-of-type{border-top:0}.d svg{width:30px;height:30px}.d .rp{color:#a9c8ff;font-size:12px}
-.bar{position:relative;height:6px;border-radius:3px;background:#4a2a5a}.bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#9a6bd6,#ffb627,#d9420f)}.rng{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}.rng span{color:var(--mut)}
-.alert{background:#4a2410;color:#fff1de;border-left:5px solid #e8742a;border-radius:14px;padding:12px;margin:12px 0}.alert.sev{background:#5a1010;border-color:#ff4a3a}.alert b{display:block}.alert details{font-size:13px;color:#f3d6c0;margin-top:6px;white-space:pre-wrap}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.grid div{background:var(--card2);border-radius:14px;padding:10px 6px;text-align:center}.grid b{display:block;font-size:16px}.grid span{font-size:12px;color:var(--mut)}
+h2{font:600 12px -apple-system,system-ui,sans-serif;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
+.hours{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}.hours::-webkit-scrollbar{height:4px}.hours::-webkit-scrollbar-thumb{background:var(--acc);border-radius:4px}
+.h{flex:0 0 64px;text-align:center;background:var(--card2);border-radius:14px;padding:8px 4px;scroll-snap-align:start}.h svg{width:32px;height:32px}.h b{display:block}.h small{color:var(--mut);font-size:11px;display:block}.h .rp{color:#8cc0ff}
+.d{display:grid;grid-template-columns:54px 34px 44px 1fr;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}.d:first-of-type{border-top:0}.d svg{width:30px;height:30px}.d .rp{color:#8cc0ff;font-size:12px}
+.bar{position:relative;height:6px;border-radius:3px;background:var(--line)}.bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#6fb3ff,#ffd166,#f08a4b)}.rng{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}.rng span{color:var(--mut)}
+.alert{background:#4a3410;color:#fff6e6;border-left:5px solid #e8a42a;border-radius:14px;padding:12px;margin:12px 0}.alert.sev{background:#5a1616;border-color:#ff5a4a}.alert b{display:block}.alert details{font-size:13px;opacity:.9;margin-top:6px;white-space:pre-wrap}
 .sun{display:flex;justify-content:space-around;text-align:center}.sun b{display:block;font-size:17px}
 .locs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:12px 0 0}.locs:empty{display:none}
-.chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:#3a1b4a;border:1.5px solid #ff7a1a55;color:var(--ink);border-radius:14px;padding:7px 12px;cursor:pointer;font:inherit;min-width:92px;text-align:left}
-.chip.on{background:linear-gradient(135deg,#ff7a1a,#d9420f);color:#1c0b2b;border-color:#ffb35c}.chip b{font-size:14px}.chip small{font-size:11px;opacity:.85}.chip .t{font-size:18px;font-weight:600}
+.chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:var(--card2);border:1.5px solid var(--line);color:var(--ink);border-radius:14px;padding:7px 12px;cursor:pointer;font:inherit;min-width:92px;text-align:left}
+.chip.on{background:var(--chipon);color:var(--chipink);border-color:var(--chipon)}.chip b{font-size:14px}.chip small{font-size:11px;opacity:.85}.chip .t{font-size:18px;font-weight:600}
 .chip .def{display:inline-block;margin-left:4px;width:10px;height:10px;vertical-align:0}
-.lhead{display:flex;align-items:center;justify-content:space-between;margin-top:12px}.lhead h2{margin:0}.lk{background:none;border:0;color:var(--mut);font:600 12px inherit;cursor:pointer;text-decoration:underline}
-.ed{display:flex;gap:4px;margin-top:6px}.ed button{background:#1d0c27;border:1px solid #8a4a1f;color:var(--ink);border-radius:8px;font:12px inherit;padding:3px 6px;cursor:pointer}.ed button.del{border-color:#ff4a3a;color:#ff9a7a}
-.chip.on .ed button{background:#fff1de;color:#1c0b2b}
-.savebtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#1d0c27;border:1.5px solid #ffb35c;color:#ffb35c;border-radius:12px;padding:6px 12px;font:600 13px inherit;cursor:pointer}.savebtn svg{width:18px;height:18px}.savebtn.saved{background:#ffb35c;color:#1c0b2b}
-.picks{display:flex;flex-direction:column;gap:8px}.pickb{display:flex;flex-direction:column;align-items:flex-start;background:#3a1b4a;border:1.5px solid #ff7a1a55;color:var(--ink);border-radius:14px;padding:10px 14px;font:inherit;cursor:pointer;text-align:left}.pickb b{font-size:16px}.pickb small{color:var(--mut);font-size:12px}.pickb:active{background:#ff7a1a;color:#1c0b2b}
-.msg{text-align:center;color:var(--mut);padding:20px}.err{color:#ff9a7a}
+.lhead{display:flex;align-items:center;justify-content:space-between;margin-top:12px}.lhead h2{margin:0}.lk{background:none;border:0;color:var(--mut);font:600 12px -apple-system,system-ui,sans-serif;cursor:pointer;text-decoration:underline;padding:8px 0}
+.ed{display:flex;gap:4px;margin-top:6px}.ed button{background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:8px;font:12px -apple-system,system-ui,sans-serif;padding:4px 7px;cursor:pointer}.ed button.del{border-color:#e55a4a;color:#ff9a8a}
+.chip.on .ed button{background:#fff;color:#1d3557}
+.savebtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:transparent;border:1.5px solid var(--acc);color:var(--acc);border-radius:12px;padding:6px 12px;font:600 13px -apple-system,system-ui,sans-serif;cursor:pointer}.savebtn svg{width:18px;height:18px}.savebtn.saved{background:var(--acc);color:#fff}
+.picks{display:flex;flex-direction:column;gap:8px}.pickb{display:flex;flex-direction:column;align-items:flex-start;background:var(--card2);border:1.5px solid var(--line);color:var(--ink);border-radius:14px;padding:10px 14px;font:inherit;cursor:pointer;text-align:left;min-height:48px}.pickb b{font-size:16px}.pickb small{color:var(--mut);font-size:12px}.pickb:active{background:var(--acc);color:#fff}
+.msg{text-align:center;color:var(--mut);padding:20px}.err{color:#ff9a8a}
 .foot{text-align:center;font-size:11px;color:var(--mut);margin-top:18px}.foot a{color:inherit}
-#inst[hidden],[hidden]{display:none!important}#ihelp{font-size:13px}
+[hidden]{display:none!important}#ihelp{font-size:13px}
+.mb{position:absolute;right:0;top:50%;transform:translateY(-50%);width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center}.mb svg{width:22px;height:22px}
+#updBan{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:10px 18px;font:700 14px -apple-system,system-ui,sans-serif;box-shadow:0 6px 18px #0005;cursor:pointer}
+/* menu */
+.menu{position:fixed;inset:0;background:#0008;z-index:20;display:none;justify-content:flex-end}.menu.on{display:flex}
+.mp{width:84%;max-width:340px;height:100%;background:var(--bg2);box-shadow:-6px 0 22px #0006;animation:mslide .25s;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;padding:0 10px}@keyframes mslide{from{transform:translateX(100%)}}
+.mhd{display:flex;align-items:flex-start;justify-content:space-between;padding:max(18px,env(safe-area-inset-top)) 4px 14px 12px;border-bottom:1px solid var(--line)}
+.mtitle{font:600 22px Georgia,serif;color:var(--title)}.msync{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mut);margin-top:6px}.msync .dot{width:7px;height:7px;border-radius:50%;background:var(--mut);opacity:.6}.msync.on .dot{background:#3fbf72;opacity:1}
+.mx{width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center}
+.msec{padding:8px 0 6px;border-bottom:1px solid var(--line)}.msec:last-of-type{border-bottom:0}
+.msh{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);padding:10px 12px 6px}
+.mi{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:6px 10px;background:transparent;border:0;border-radius:14px;color:var(--ink);font:600 15px -apple-system,system-ui,sans-serif;text-align:left;cursor:pointer}
+.mi:active{background:var(--card2)}@media (hover:hover){.mi:hover{background:var(--card2)}}
+.mic{width:36px;height:36px;flex:0 0 36px;border-radius:50%;background:var(--card2);color:var(--acc);display:inline-flex;align-items:center;justify-content:center}.mic svg{width:20px;height:20px}
+.mtx{flex:1;min-width:0}.mtx small{display:block;font-weight:400;font-size:12px;color:var(--mut);margin-top:2px}.chv{color:var(--mut);display:inline-flex}.chv svg{width:16px;height:16px}
+.mthl{font-size:13px;font-weight:600;padding:2px 12px 6px}
+.thm{display:flex;gap:6px;padding:0 10px 8px}.thm button{flex:1;min-height:40px;padding:8px 2px;border-radius:12px;border:2px solid transparent;font:700 13px -apple-system,system-ui,sans-serif;cursor:pointer}.thm button.on{border-color:var(--acc)}
+.thm [data-t=light]{background:#f4f8fd;color:#1d3557}.thm [data-t=dark]{background:#1d3557;color:#fff}.thm [data-t=fun]{background:linear-gradient(135deg,#6fd3ff,#8f7bff,#ffb86b);color:#fff}
+.mft{margin-top:auto;padding:16px 12px calc(20px + env(safe-area-inset-bottom));font-size:12px;color:var(--mut)}
+.mfl{display:flex;align-items:center;gap:8px}.mfl a{color:inherit;text-decoration:none;padding:6px 0}.mfv{margin-top:2px}.mcr{margin-top:6px;font-family:Georgia,serif;font-style:italic;font-size:14px}#syFoot{font-size:11px;margin-top:8px;opacity:.85;overflow-wrap:anywhere}
+.page{position:fixed;inset:0;z-index:21;display:none;overflow:auto;background:linear-gradient(180deg,var(--bg1),var(--bg2));padding:max(14px,env(safe-area-inset-top)) 16px 30px}.page.on{display:block}.page>*{max-width:520px;margin-left:auto;margin-right:auto}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.ph h3{font:600 20px Georgia,serif;margin:0;color:var(--title)}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:14px;padding:11px 16px;min-height:46px;font:700 15px -apple-system,system-ui,sans-serif;cursor:pointer;flex:1}.btn.alt{background:var(--card2);color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--mut);margin-top:8px;text-align:center}
+textarea{width:100%;min-height:100px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg2);color:var(--ink);padding:10px;font:14px -apple-system,system-ui,sans-serif;margin-top:10px}
+#syNote{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:40;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:8px 16px;font:700 13px -apple-system,system-ui,sans-serif;box-shadow:0 4px 14px #0004;cursor:pointer}
+/* light */
+[data-theme=light]{--bg1:#e9f2fc;--bg2:#f7fbff;--ink:#1d2b3f;--mut:#5d708a;--card:#ffffffee;--card2:#eef4fb;--acc:#2f7ad6;--line:#d8e3f0;--title:#1d3557}
+[data-theme=light] .card{box-shadow:0 4px 16px #1d355714}[data-theme=light] .h .rp,[data-theme=light] .d .rp{color:#2f6fbf}[data-theme=light] .alert{background:#fff1d6;color:#4a3410}[data-theme=light] .alert.sev{background:#ffe0dc;color:#5a1616}[data-theme=light] input{background:#fff}[data-theme=light] .err{color:#c0392b}[data-theme=light] .mp{background:#f7fbff}
+/* fun */
+[data-theme=fun]{--bg1:#6fc3ff;--bg2:#8f7bff;--ink:#22204a;--mut:#4d4a85;--card:#ffffffee;--card2:#efeaff;--acc:#7a5cff;--line:#e0d8ff;--title:#ffffff}
+[data-theme=fun] body{background:linear-gradient(160deg,#6fd3ff 0%,#8f7bff 55%,#ffb86b 100%) fixed}[data-theme=fun] h1{text-shadow:0 2px 0 #5a3fd6}[data-theme=fun] h1 small{color:#fff}[data-theme=fun] .foot{color:#fff}
+[data-theme=fun] .card{border-radius:26px;border:2px solid #fff}[data-theme=fun] .h .rp,[data-theme=fun] .d .rp{color:#1f6fd6}[data-theme=fun] .alert{background:#fff4e0;color:#4a3410}[data-theme=fun] input{background:#fff}[data-theme=fun] .mp{background:#f7f4ff}[data-theme=fun] .mtitle,[data-theme=fun] .ph h3{color:#4b33c4}[data-theme=fun] .err{color:#c0392b}
 
-.spook{display:flex;justify-content:space-around;align-items:flex-end;height:96px;margin:0 0 4px}.spook svg{height:100%;width:auto;overflow:visible}
-.sk .arm{transform-origin:50% 0;transform-box:fill-box;animation:arm .8s ease-in-out infinite alternate}.sk .arm.r{animation-delay:-.4s}
-.sk .leg{transform-origin:50% 0;transform-box:fill-box;animation:leg .8s ease-in-out infinite alternate}.sk .leg.r{animation-delay:-.4s}.sk .bod{animation:bob .4s ease-in-out infinite alternate}
-@keyframes arm{from{transform:rotate(-55deg)}to{transform:rotate(40deg)}}@keyframes leg{from{transform:rotate(-25deg)}to{transform:rotate(20deg)}}@keyframes bob{to{transform:translateY(-4px)}}
-.cat .tail{transform-origin:0% 90%;transform-box:fill-box;animation:tail 2.2s ease-in-out infinite alternate}.cat .back{transform-origin:50% 100%;transform-box:fill-box;animation:arch 3.4s ease-in-out infinite}@keyframes tail{from{transform:rotate(-12deg)}to{transform:rotate(16deg)}}@keyframes arch{0%,70%,100%{transform:none}80%,90%{transform:translateY(-4px) scaleY(1.06)}}
-.cat .eye{animation:blink 4s infinite}@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}.cat .eye{transform-origin:center;transform-box:fill-box;filter:drop-shadow(0 0 3px #b6ff3a)}
-.pk .glow{animation:flick 1.3s infinite}@keyframes flick{0%,100%{opacity:1}20%{opacity:.75}35%{opacity:.95}50%{opacity:.6}70%{opacity:.9}}.pk{filter:drop-shadow(0 0 10px #ff7a1a66)}
-#leaves{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}.app{position:relative;z-index:1}
-.lf{position:absolute;top:-40px;width:22px;height:22px;animation:fall linear infinite}@keyframes fall{0%{transform:translate(0,-40px) rotate(0)}50%{transform:translate(40px,50vh) rotate(200deg)}100%{transform:translate(-20px,105vh) rotate(420deg)}}
-@media (prefers-reduced-motion:reduce){.sk *,.cat *,.pk *,.lf{animation:none!important}#leaves{display:none}}
-
-header{position:relative}.mb{position:absolute;right:0;top:50%;transform:translateY(-50%);width:42px;height:42px;padding:0;display:flex;align-items:center;justify-content:center}.mb svg{width:22px;height:22px}
-.menu{position:fixed;inset:0;background:#0007;z-index:20;display:none;justify-content:flex-end}.menu.on{display:flex}
-.mp{width:80%;max-width:320px;height:100%;background:linear-gradient(180deg,var(--bg1),var(--bg2));padding:18px 16px;box-shadow:-6px 0 22px #0006;animation:mslide .25s;overflow:auto}@keyframes mslide{from{transform:translateX(100%)}}
-.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.mh b{font:600 22px Georgia,serif;color:#ffb35c}
-.mlab{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:6px 0}
-.thm{display:flex;gap:6px;margin-bottom:16px}.thm button{flex:1;padding:10px 2px;border-radius:12px;border:2px solid transparent;font:700 13px inherit;cursor:pointer}.thm button.on{border-color:var(--acc)}
-.thm [data-t=light]{background:#fff3e2;color:#5a2d0c}.thm [data-t=dark]{background:#2a0f3d;color:#fff1de}.thm [data-t=fun]{background:linear-gradient(135deg,#ff8a1f,#9b4dff,#9be22d);color:#fff}
-.mi{display:block;width:100%;text-align:left;background:var(--card);border:1px solid #ff7a1a33;color:var(--ink);border-radius:14px;padding:13px 14px;margin-bottom:8px;font:600 15px inherit;cursor:pointer}.mi small{display:block;font-weight:400;color:var(--mut);font-size:12px;margin-top:3px}
-#updBan{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:10px 18px;font:700 14px inherit;box-shadow:0 6px 18px #0005;cursor:pointer}
-.fdeco{display:none;position:fixed;pointer-events:none;z-index:0}[data-theme=fun] .fdeco{display:block}
-[data-theme=light]{--bg1:#fff4e4;--bg2:#ffd9b3;--ink:#3d220f;--mut:#9a5a2a;--card:#fffaf2e6;--acc:#e8661a}
-[data-theme=light] h1{color:#c4520f;text-shadow:none}[data-theme=light] .card{box-shadow:0 4px 16px #c4520f22;border-color:#e8661a33}
-[data-theme=light] .grid div,[data-theme=light] .h,[data-theme=light] .chip,[data-theme=light] .pickb{background:#ffe9d2}[data-theme=light] .d{border-color:#f0cfae}[data-theme=light] .bar{background:#f0d6bb}
-[data-theme=light] input,[data-theme=light] .ed button,[data-theme=light] .savebtn{background:#fff;color:#3d220f}[data-theme=light] .savebtn{color:#c4520f;border-color:#e8661a}[data-theme=light] .savebtn.saved{background:#e8661a;color:#fff}
-[data-theme=light] .chip.on{color:#fff}[data-theme=light] .h .rp,[data-theme=light] .d .rp{color:#2f6fbf}[data-theme=light] .alert{background:#ffe1c9;color:#4a2410}[data-theme=light] .alert details{color:#6a3a1a}
-[data-theme=light] .spook{background:linear-gradient(180deg,#3a1b4a,#2a0f3d);border-radius:18px;padding:6px 4px 0;height:104px}
-[data-theme=light] .ib{color:#fff}[data-theme=light] .mh b{color:#c4520f}[data-theme=light] .menu .mp{background:linear-gradient(180deg,#fff7ec,#ffe4c6)}
-[data-theme=fun]{--bg1:#ff8a1f;--bg2:#7b2ff2;--ink:#2b0b3d;--mut:#5b2a86;--card:#fff8eef2;--acc:#9b4dff}
-[data-theme=fun] body{background:linear-gradient(160deg,#ffb347 0%,#ff7ab6 35%,#9b4dff 70%,#7be22d 100%) fixed}
-[data-theme=fun] h1{color:#fff;text-shadow:2px 2px 0 #9b4dff,4px 4px 0 #2b0b3d}[data-theme=fun] h1 small{color:#fff}
-[data-theme=fun] .card{border-radius:28px;border:3px solid #fff;box-shadow:0 7px 0 #2b0b3d33,0 10px 24px #0003}
-[data-theme=fun] .grid div,[data-theme=fun] .h,[data-theme=fun] .chip,[data-theme=fun] .pickb{background:#f1e4ff;border-radius:20px}[data-theme=fun] .d{border-color:#e6d4ff}[data-theme=fun] .bar{background:#e6d4ff}
-[data-theme=fun] input{background:#fff;color:#2b0b3d;border-color:#9b4dff;border-radius:999px}[data-theme=fun] button.go,[data-theme=fun] .ib{border-radius:999px;background:#7be22d;color:#2b0b3d}
-[data-theme=fun] .chip.on{background:linear-gradient(135deg,#ff8a1f,#9b4dff);color:#fff}[data-theme=fun] .ed button,[data-theme=fun] .savebtn{background:#fff;color:#7b2ff2;border-color:#9b4dff}[data-theme=fun] .savebtn.saved{background:#9b4dff;color:#fff}
-[data-theme=fun] .h .rp,[data-theme=fun] .d .rp{color:#1f6fd6}[data-theme=fun] .alert{background:#fff0e0;color:#4a2410}[data-theme=fun] .alert details{color:#6a3a1a}
-[data-theme=fun] .spook{background:linear-gradient(180deg,#2b0b3d,#4a1670);border-radius:24px;padding:6px 4px 0;height:104px;border:3px solid #fff}
-[data-theme=fun] .mi{border-radius:999px;background:#fff;color:#2b0b3d}[data-theme=fun] .mh b{color:#fff}[data-theme=fun] .foot{color:#fff}
-.fb{animation:flap 1.6s ease-in-out infinite alternate}@keyframes flap{to{transform:translateY(-10px) rotate(6deg)}}
-[data-theme=light] .chip.on{background:linear-gradient(135deg,#ff8a3a,#e0560f);color:#fff;border-color:#e8661a}[data-theme=fun] .chip.on{background:linear-gradient(135deg,#ff8a1f,#9b4dff)}[data-theme=fun] h1 small{text-shadow:none;font-weight:600}[data-theme=fun] h1{text-shadow:2px 2px 0 #7b2ff2}
-</style></head><body><div class="fdeco fb" style="top:70px;left:6px"><svg viewBox="0 0 64 32" width="60"><path d="M32 10c-2-4-5-4-6 0-6-6-14-6-22 2 6 0 9 3 10 8 3-3 7-3 9 1 2-3 5-3 9-3 4 0 7 0 9 3 2-4 6-4 9-1 1-5 4-8 10-8-8-8-16-8-22-2-1-4-4-4-6 0z" fill="#2b0b3d"/><circle cx="29" cy="12" r="1.3" fill="#ffe14a"/><circle cx="35" cy="12" r="1.3" fill="#ffe14a"/></svg></div><div class="fdeco fb" style="top:200px;right:8px"><svg viewBox="0 0 64 32" width="44"><path d="M32 10c-2-4-5-4-6 0-6-6-14-6-22 2 6 0 9 3 10 8 3-3 7-3 9 1 2-3 5-3 9-3 4 0 7 0 9 3 2-4 6-4 9-1 1-5 4-8 10-8-8-8-16-8-22-2-1-4-4-4-6 0z" fill="#2b0b3d"/><circle cx="29" cy="12" r="1.3" fill="#ffe14a"/><circle cx="35" cy="12" r="1.3" fill="#ffe14a"/></svg></div><div class="fdeco" style="top:46%;left:4px"><svg viewBox="0 0 30 34" width="26"><path d="M15 2 28 32H2z" fill="#fff6e0"/><path d="M8.5 17h13L28 32H2z" fill="#ff8a1f"/><path d="M5 25h20l3 7H2z" fill="#ffd23f"/></svg></div><div class="fdeco" style="bottom:120px;right:10px"><svg viewBox="0 0 30 34" width="32"><path d="M15 2 28 32H2z" fill="#fff6e0"/><path d="M8.5 17h13L28 32H2z" fill="#ff8a1f"/><path d="M5 25h20l3 7H2z" fill="#ffd23f"/></svg></div><div class="fdeco" style="top:14px;right:70px"><svg viewBox="0 0 24 24" width="20"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#ffe14a"/></svg></div><div class="fdeco" style="bottom:40px;left:20px"><svg viewBox="0 0 24 24" width="26"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#7be22d"/></svg></div><div class="fdeco" style="top:60%;right:6px"><svg viewBox="0 0 24 24" width="16"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#fff"/></svg></div><div class="menu" id="menu"><div class="mp"><div class="mh"><b>Menu</b><button class="ib" id="menuX" type="button" aria-label="Close">Close</button></div>
-<div class="mlab">Theme</div><div class="thm" id="thm"><button data-t="light" type="button">Light</button><button data-t="dark" type="button">Dark</button><button data-t="fun" type="button">Fun</button></div>
-<button class="mi" id="inst" type="button">Install App<small id="ihelp" hidden></small></button>
-<button class="mi" id="chk" type="button">Check for Updates<small id="ver"></small></button></div></div><button id="updBan" type="button" hidden>Update available, tap to refresh</button><div id="leaves" aria-hidden="true"></div><script>(()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=document.getElementById('leaves'),C=['#d9520f','#ff8a1f','#b8320f','#e8b030','#8a2a0a'];
-for(let i=0;i<9;i++){const d=document.createElement('div');d.className='lf';const c=C[i%C.length];d.innerHTML=`<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2c3 4 9 5 9 11c-3-1-5 0-6 2c1 2 0 5-3 7c-3-2-4-5-3-7c-1-2-3-3-6-2c0-6 6-7 9-11z" fill="${c}" opacity=".85"/><path d="M12 6v16" stroke="#5a1a05" stroke-width="1"/></svg>`;
- d.style.left=(Math.random()*95)+'%';d.style.animationDuration=(10+Math.random()*10)+'s';d.style.animationDelay=(-Math.random()*20)+'s';const s=14+Math.random()*14;d.style.width=d.style.height=s+'px';L.appendChild(d)}})();</script>
+</style></head><body><div class="menu" id="menu"><div class="mp" role="dialog" aria-label="Menu">
+<div class="mhd"><div><div class="mtitle">My Weather</div><div class="msync" id="mhSync"><span class="dot"></span><span class="dst">Saved on this phone</span></div></div><button class="ib mx" id="menuX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="msec"><div class="msh">Weather</div>
+<button class="mi" id="mRef" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></span><span class="mtx">Refresh now<small>Get the latest conditions</small></span></button>
+<button class="mi" id="mPlaces" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="mtx">Edit my places<small>Rename, reorder, set default</small></span></button></div>
+<div class="msec"><div class="msh">Backup &amp; Sync</div>
+<button class="mi" id="mSync" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 9.5 4.3 4.3 0 0 0 7 18z"/><path d="M10 13.5l1.5 1.5 3-3"/></svg></span><span class="mtx"><span id="syLbl">Sign in with Google</span><small>Keep places on all your devices</small></span><span class="chv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+<button class="mi" id="mBk" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l8-4 8 4-8 4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg></span><span class="mtx">Backup &amp; Restore<small>Save or bring back your places</small></span><span class="chv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span></button></div>
+<div class="msec"><div class="msh">Settings</div><div class="mthl">Theme</div>
+<div class="thm" id="thm"><button data-t="light" type="button">Light</button><button data-t="dark" type="button">Dark</button><button data-t="fun" type="button">Bright</button></div>
+<button class="mi" id="inst" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M12 8v6M9.5 11.5 12 14l2.5-2.5"/></svg></span><span class="mtx">Install app<small id="ihelp" hidden></small></span></button>
+<button class="mi" id="chk" type="button"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></span><span class="mtx">Check for updates<small id="ver"></small></span></button></div>
+<div class="mft"><div class="mfl"><a href="privacy.html">Privacy</a><span>·</span><a href="terms.html">Terms</a></div><div class="mfv" id="mVer"></div><div class="mcr">Made for Ashley</div><div id="syFoot" style="display:none"></div></div>
+</div></div>
+<div class="page" id="pgSync"><div class="ph"><h3>Sync with Google</h3><button class="ib" type="button" data-close>Done</button></div>
+<div class="card"><p id="syStat" style="margin-top:0"></p><div class="row" id="syOut"><button class="btn" id="syIn" type="button">Sign in with Google</button></div><div class="row" id="syInRow" style="display:none"><button class="btn" id="syNow" type="button">Sync now</button><button class="btn alt" id="syOff" type="button">Sign out</button></div>
+<p class="tiny">Your saved places and theme are stored in a private app folder in your own Google Drive. Syncing only adds; it never wipes places.</p></div></div>
+<div class="page" id="pgBk"><div class="ph"><h3>Backup &amp; Restore</h3><button class="ib" type="button" data-close>Done</button></div>
+<div class="card"><h2>Backup</h2><div class="row"><button class="btn" id="bkSave" type="button">Save backup file</button><button class="btn alt" id="bkCopy" type="button">Copy as text</button></div><p class="tiny" id="bkMsg"></p></div>
+<div class="card"><h2>Restore</h2><div class="row"><button class="btn" id="rsFile" type="button">Choose backup file</button></div><input type="file" id="rsIn" accept=".json,application/json,text/plain" hidden><textarea id="rsTxt" placeholder="Or paste backup text here"></textarea><div class="row" style="margin-top:8px"><button class="btn alt" id="rsGo" type="button">Restore pasted text</button></div><p class="tiny" id="rsMsg">Restoring adds places. Nothing already here is deleted.</p></div></div>
+<button id="syNote" type="button" style="display:none">Tap to reconnect sync</button>
+<button id="updBan" type="button" hidden>Update available, tap to refresh</button>
 <div class="app">
 <header><h1>Ashley's Weather<small id="greet">Hello, Ashley</small></h1><button class="ib mb" id="menuBtn" type="button" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header>
-<div class="spook" aria-hidden="true">
-<svg class="sk" viewBox="0 0 60 100"><g class="bod" fill="none" stroke="#f3ead8" stroke-width="3" stroke-linecap="round"><circle cx="30" cy="14" r="10" fill="#f3ead8"/><g fill="#2a0f3d" stroke="none"><circle cx="26" cy="13" r="2.6"/><circle cx="34" cy="13" r="2.6"/><path d="M27 19h6"/></g><path d="M27 19.5h6M28.5 19v2M31.5 19v2" stroke="#2a0f3d" stroke-width="1.2"/>
-<path d="M30 24v28"/><path d="M23 32h14M24 37h12M25 42h10"/><path class="arm l" d="M26 30l-12 14l-4 10"/><path class="arm r" d="M34 30l12 14l4 10"/><path d="M24 54h12"/><path class="leg l" d="M26 54l-6 20l-6 2"/><path class="leg r" d="M34 54l6 20l6 2"/></g></svg>
-<svg class="pk" viewBox="0 0 120 100"><defs><radialGradient id="pkl" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffb04a"/><stop offset=".55" stop-color="#f07a12"/><stop offset="1" stop-color="#a8420a"/></radialGradient><radialGradient id="pkm" cx=".4" cy=".3" r=".75"><stop offset="0" stop-color="#ffc066"/><stop offset=".5" stop-color="#ff8a1f"/><stop offset="1" stop-color="#b44a0c"/></radialGradient><linearGradient id="stm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a7a3a"/><stop offset=".5" stop-color="#5a5a22"/><stop offset="1" stop-color="#3a2f12"/></linearGradient><radialGradient id="cnd" cx=".5" cy=".6" r=".6"><stop offset="0" stop-color="#fff6c0"/><stop offset=".5" stop-color="#ffc23a"/><stop offset="1" stop-color="#e86a0a"/></radialGradient></defs>
-<path d="M56 22c-1-8 2-15 9-19c2 1 3 3 2 5c-5 3-6 8-5 14z" fill="url(#stm)" stroke="#2a220c" stroke-width="1"/><path d="M60 6c1 4 1 9 0 15M63 5c0 5 0 10-1 16" stroke="#a89a52" stroke-width=".8" opacity=".7"/>
-<path d="M30 30c-22 2-28 30-20 48c6 14 22 18 34 16z" fill="url(#pkl)"/><path d="M90 30c22 2 28 30 20 48c-6 14-22 18-34 16z" fill="url(#pkl)"/>
-<path d="M44 24c-14 4-18 28-14 46c3 14 12 24 22 25z" fill="url(#pkm)"/><path d="M76 24c14 4 18 28 14 46c-3 14-12 24-22 25z" fill="url(#pkm)"/>
-<path d="M60 22c-12 0-18 22-17 42c1 18 7 31 17 31s16-13 17-31c1-20-5-42-17-42z" fill="url(#pkm)"/>
-<g fill="none" stroke="#8a3406" stroke-width="1.4" opacity=".55"><path d="M44 24c-6 14-8 46 8 71M76 24c6 14 8 46-8 71M30 30c-6 16-6 44 14 64M90 30c6 16 6 44-14 64"/></g>
-<ellipse cx="48" cy="40" rx="5" ry="10" fill="#ffe0a0" opacity=".35" transform="rotate(-15 48 40)"/>
-<g fill="#5a1e04"><path d="M38 52l10-14l10 14z"/><path d="M62 52l10-14l10 14z"/><path d="M55 62l5-7l5 7z"/><path d="M34 70q26 20 52 0l-6 3l-4 6l-6-4l-5 6l-5-6l-6 4l-4-6z"/></g>
-<g class="glow" fill="url(#cnd)"><path d="M40 51l8-11l8 11z"/><path d="M64 51l8-11l8 11z"/><path d="M56.5 61l3.5-5l3.5 5z"/><path d="M37 71.5q23 16 46 0l-4.5 2.5l-4 5l-5.5-3.5l-5 5l-5-5l-5.5 3.5l-4-5z"/></g></svg>
-<svg class="cat" viewBox="0 0 110 100"><defs><linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2e2a33"/><stop offset=".4" stop-color="#121014"/><stop offset="1" stop-color="#050406"/></linearGradient><radialGradient id="shn" cx=".35" cy=".25" r=".5"><stop offset="0" stop-color="#5a5468" stop-opacity=".55"/><stop offset="1" stop-color="#5a5468" stop-opacity="0"/></radialGradient><radialGradient id="eyg" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#eaff9a"/><stop offset=".6" stop-color="#9be22a"/><stop offset="1" stop-color="#4f8a10"/></radialGradient></defs>
-<path class="tail" d="M78 92c14-2 22-10 22-24c0-10 4-16 8-18" fill="none" stroke="url(#fur)" stroke-width="5.5" stroke-linecap="round"/>
-<g class="back"><path d="M30 96c-4-14-2-30 8-40c6-6 14-8 22-7c10 1 20 8 24 20c3 9 2 19-2 27z" fill="url(#fur)"/><path d="M38 60c6-6 18-8 28-3" stroke="#6a6478" stroke-width="1.2" fill="none" opacity=".5"/>
-<path d="M33 96c0-6 2-9 6-9s5 4 5 9zM70 96c0-6 2-9 6-9s5 4 5 9z" fill="#0a090c"/></g>
-<path d="M30 46c-2-10 0-24 4-34l12 14c5-2 11-2 16 0l12-14c4 10 6 24 4 34c-2 12-12 20-24 20s-22-8-24-20z" fill="url(#fur)"/>
-<path d="M35 18l8 10l-6 2zM73 18l-8 10l6 2z" fill="#6a3a4a" opacity=".75"/><ellipse cx="44" cy="30" rx="12" ry="9" fill="url(#shn)"/>
-<g fill="url(#eyg)"><ellipse class="eye" cx="44" cy="42" rx="5.2" ry="4.6"/><ellipse class="eye" cx="64" cy="42" rx="5.2" ry="4.6"/></g><g fill="#050406"><ellipse cx="44" cy="42" rx="1.3" ry="4.2"/><ellipse cx="64" cy="42" rx="1.3" ry="4.2"/></g><g fill="#fff" opacity=".8"><circle cx="42.5" cy="40.5" r=".9"/><circle cx="62.5" cy="40.5" r=".9"/></g>
-<path d="M51.5 50l2.5 2.5l2.5-2.5z" fill="#c97a8a"/><path d="M54 52.5v2q-2 2-4 1M54 54.5q2 2 4 1" stroke="#3a3440" stroke-width=".8" fill="none"/>
-<g stroke="#cfcad8" stroke-width=".6" opacity=".7"><path d="M47 52l-17-3M47 54l-17 1M47 56l-15 4M61 52l17-3M61 54l17 1M61 56l15 4"/></g></svg>
-<svg class="sk" viewBox="0 0 60 100" style="animation-delay:-.2s"><g class="bod" fill="none" stroke="#f3ead8" stroke-width="3" stroke-linecap="round"><circle cx="30" cy="14" r="10" fill="#f3ead8"/><g fill="#2a0f3d" stroke="none"><circle cx="26" cy="13" r="2.6"/><circle cx="34" cy="13" r="2.6"/></g><path d="M27 19.5h6M28.5 19v2M31.5 19v2" stroke="#2a0f3d" stroke-width="1.2"/><path d="M30 24v28"/><path d="M23 32h14M24 37h12M25 42h10"/><path class="arm r" d="M26 30l-12 14l-4 10"/><path class="arm l" d="M34 30l12 14l4 10"/><path d="M24 54h12"/><path class="leg r" d="M26 54l-6 20l-6 2"/><path class="leg l" d="M34 54l6 20l6 2"/></g></svg>
-</div>
 <div class="card" id="ihelp" hidden></div>
 <div class="card"><form id="f"><input id="zip" placeholder="City or ZIP" aria-label="City or ZIP" autocomplete="off" enterkeyhint="search"><button class="go">Go</button></form><div class="lhead" id="lhead" hidden><h2>My places</h2><button class="lk" id="ledit" type="button">Edit</button></div><div class="locs" id="locs"></div></div>
 <div id="out"><p class="msg">Type a city or ZIP code to see your weather.</p></div>
-<p class="foot">Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Alerts: <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a> · ZIP lookup: Zippopotam.us</p>
+<p class="foot">Forecast: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Current conditions &amp; alerts: <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a> · ZIP lookup: Zippopotam.us</p>
 </div>
 <script>
 const $=id=>document.getElementById(id),K='aw.zip',KC='aw.cache';
 const W={0:['Clear','sun'],1:['Mostly clear','sun'],2:['Partly cloudy','pc'],3:['Cloudy','cloud'],45:['Fog','fog'],48:['Freezing fog','fog'],51:['Light drizzle','rain'],53:['Drizzle','rain'],55:['Heavy drizzle','rain'],56:['Freezing drizzle','rain'],57:['Freezing drizzle','rain'],61:['Light rain','rain'],63:['Rain','rain'],65:['Heavy rain','rain'],66:['Freezing rain','rain'],67:['Freezing rain','rain'],71:['Light snow','snow'],73:['Snow','snow'],75:['Heavy snow','snow'],77:['Snow grains','snow'],80:['Showers','rain'],81:['Showers','rain'],82:['Heavy showers','rain'],85:['Snow showers','snow'],86:['Snow showers','snow'],95:['Thunderstorms','storm'],96:['Storms with hail','storm'],99:['Storms with hail','storm']};
-const CL='<path d="M18 46h30a10 10 0 0 0 0-20a14 14 0 0 0-27-3a10 10 0 0 0-3 23z" fill="#fff" stroke="#c9b3c4" stroke-width="2"/>';
+const CL='<path d="M18 46h30a10 10 0 0 0 0-20a14 14 0 0 0-27-3a10 10 0 0 0-3 23z" fill="#fff" stroke="#a9b9cf" stroke-width="2"/>';
 function ic(k,night){const sun=night?'<path d="M30 10a14 14 0 1 0 14 18a11 11 0 0 1-14-18z" fill="#ffe08a" stroke="#e0b84a" stroke-width="1.5"/>':'<circle cx="26" cy="22" r="11" fill="#ffc94a"/><g stroke="#ffb627" stroke-width="3" stroke-linecap="round"><path d="M26 4v4M26 36v4M8 22h4M40 22h4M13 9l3 3M39 9l-3 3M13 35l3-3"/></g>';
- const S={sun:night?sun:'<circle cx="32" cy="32" r="13" fill="#ffc94a"/><g stroke="#ffb627" stroke-width="3.5" stroke-linecap="round"><path d="M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4 4M49 15l-4 4M15 49l4-4M49 49l-4-4"/></g>',pc:sun+CL,cloud:'<path d="M14 48h34a12 12 0 0 0 0-24a16 16 0 0 0-31-3a12 12 0 0 0-3 27z" fill="#f2eef6" stroke="#c9b3c4" stroke-width="2"/>',
- fog:'<g stroke="#b8a9b6" stroke-width="4" stroke-linecap="round"><path d="M12 26h40M8 36h44M14 46h36"/></g>',rain:CL+'<g stroke="#5b8fd6" stroke-width="3" stroke-linecap="round"><path d="M24 52l-3 6M34 52l-3 6M44 52l-3 6"/></g>',
+ const S={sun:night?sun:'<circle cx="32" cy="32" r="13" fill="#ffc94a"/><g stroke="#ffb627" stroke-width="3.5" stroke-linecap="round"><path d="M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4 4M49 15l-4 4M15 49l4-4M49 49l-4-4"/></g>',pc:sun+CL,cloud:'<path d="M14 48h34a12 12 0 0 0 0-24a16 16 0 0 0-31-3a12 12 0 0 0-3 27z" fill="#eef3f9" stroke="#a9b9cf" stroke-width="2"/>',
+ fog:'<g stroke="#9fb0c6" stroke-width="4" stroke-linecap="round"><path d="M12 26h40M8 36h44M14 46h36"/></g>',rain:CL+'<g stroke="#5b8fd6" stroke-width="3" stroke-linecap="round"><path d="M24 52l-3 6M34 52l-3 6M44 52l-3 6"/></g>',
  snow:CL+'<g fill="#8cc2f0"><circle cx="24" cy="55" r="2.5"/><circle cx="34" cy="58" r="2.5"/><circle cx="44" cy="55" r="2.5"/></g>',storm:CL+'<path d="M34 48l-6 10h6l-4 8 10-12h-6l4-6z" fill="#ffc94a" stroke="#e0a020" stroke-width="1"/>'};
  return '<svg viewBox="0 0 64 64" aria-hidden="true">'+(S[k]||S.cloud)+'</svg>'}
+function ago(t){t=+t;if(!t||!isFinite(t)||t>Date.now()+864e5)return'not yet';const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' hr ago':Math.round(m/1440)+' days ago'}
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const tm=s=>new Date(s).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 function greet(){const h=new Date().getHours();$('greet').textContent=h<12?'Good morning, Ashley':h<17?'Good afternoon, Ashley':'Good evening, Ashley'}greet();
 async function geo(zip){if(zip.startsWith('geo:')){const [ll,nm,cc]=zip.slice(4).split('|');const [a,b]=ll.split(',');return{lat:+a,lon:+b,name:nm,cc:cc||'US'}}const r=await fetch('https://api.zippopotam.us/us/'+zip);if(!r.ok)throw new Error('ZIP code not found');const j=await r.json(),p=j.places[0];return{lat:+p.latitude,lon:+p.longitude,name:p['place name']+', '+p['state abbreviation'],cc:'US'}}
+const NWS={};const tmo=(p,ms)=>Promise.race([p,new Promise((_,no)=>setTimeout(()=>no(new Error('timeout')),ms))]);
+// current conditions from the nearest National Weather Service station when its reading is fresh (under 90 min old)
+async function nwsNow(g){const H={headers:{Accept:'application/geo+json'}},k=g.lat.toFixed(4)+','+g.lon.toFixed(4);
+ return tmo((async()=>{let st=NWS[k];if(!st){const p=await(await fetch('https://api.weather.gov/points/'+k,H)).json();const ss=await(await fetch(p.properties.observationStations,H)).json();st=NWS[k]=ss.features.slice(0,3).map(f=>({id:f.properties.stationIdentifier,name:f.properties.name}))}
+  for(const s of st){try{const o=(await(await fetch('https://api.weather.gov/stations/'+s.id+'/observations/latest',H)).json()).properties;const ts=Date.parse(o.timestamp);
+   if(o.temperature.value==null||Date.now()-ts>54e5)continue;const F=c=>c==null?null:c*9/5+32,mph=v=>v==null?null:v/1.609344,t=F(o.temperature.value);
+   return{temp:t,feels:F(o.heatIndex.value)??F(o.windChill.value)??t,hum:o.relativeHumidity.value,wind:mph(o.windSpeed.value),gust:mph(o.windGust.value),text:o.textDescription||'',st:s.name,ts}}catch(e){}}return null})(),8000)}
 let curZip=null;async function load(zip){curZip=zip;$('out').innerHTML='<p class="msg">Loading your weather…</p>';
  try{const g=await geo(zip);
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,is_day&hourly=temperature_2m,weather_code,precipitation_probability,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7`;
   const [w,al]=await Promise.all([fetch(u).then(r=>{if(!r.ok)throw new Error('Weather service unavailable');return r.json()}),(g.cc!=='US'?Promise.resolve(null):fetch(`https://api.weather.gov/alerts/active?point=${g.lat.toFixed(4)},${g.lon.toFixed(4)}`,{headers:{Accept:'application/geo+json'}}).then(r=>r.ok?r.json():null).catch(()=>null))]);
-  localStorage.setItem(KC,JSON.stringify({zip,g,w,al,t:Date.now()}));render(g,w,al,Date.now())}
+  w.cur=g.cc==='US'?await nwsNow(g).catch(()=>null):null;safeSet(KC,JSON.stringify({zip,g,w,al,t:Date.now()}));render(g,w,al,Date.now())}
  catch(e){const c=JSON.parse(localStorage.getItem(KC)||'null');if(c&&c.zip===zip){render(c.g,c.w,c.al,c.t);$('out').insertAdjacentHTML('afterbegin','<p class="msg err">Offline — showing last saved weather.</p>')}else $('out').innerHTML='<p class="msg err">'+esc(e.message||'Something went wrong')+'. Check it and try again.</p>'}}
-function render(g,w,al,t){const c=w.current,d=w.daily,h=w.hourly,[cn,ck]=W[c.weather_code]||['—','cloud'];let H='';
+function render(g,w,al,t){const c={...w.current},o=w.cur;if(o){c.temperature_2m=o.temp;c.apparent_temperature=o.feels;if(o.hum!=null)c.relative_humidity_2m=Math.round(o.hum);if(o.wind!=null){c.wind_speed_10m=o.wind;c.wind_gusts_10m=o.gust??o.wind}}const c0=c,d=w.daily,h=w.hourly,[cn,ck]=W[c.weather_code]||['—','cloud'];let H='';
  (al&&al.features||[]).forEach(f=>{const p=f.properties;H+=`<div class="alert ${/Severe|Extreme/.test(p.severity)?'sev':''}"><b>Alert: ${esc(p.event)}</b><span class="sub">${esc(p.headline||'')}</span><details><summary>Details</summary>${esc((p.description||'')+(p.instruction?'\n\n'+p.instruction:''))}</details></div>`});
- H+=`<div class="card"><div class="place">${esc(g.name)}</div><div class="upd">${w.timezone&&w.timezone!==Intl.DateTimeFormat().resolvedOptions().timeZone?'Local time '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit',timeZone:w.timezone})+' · ':''}Updated ${new Date(t).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div>
- <div class="now"><div class="ic">${ic(ck,!c.is_day)}</div><div><div class="big">${Math.round(c.temperature_2m)}°</div><div class="cond">${cn}</div><div class="sub">Feels like ${Math.round(c.apparent_temperature)}° · H ${Math.round(d.temperature_2m_max[0])}° L ${Math.round(d.temperature_2m_min[0])}°</div></div></div>
- <div class="grid"><div><b>${Math.round(c.wind_speed_10m)} mph</b><span>Wind${c.wind_gusts_10m>c.wind_speed_10m+5?' · gusts '+Math.round(c.wind_gusts_10m):''}</span></div><div><b>${c.relative_humidity_2m}%</b><span>Humidity</span></div><div><b>${d.precipitation_probability_max[0]??0}%</b><span>Rain chance</span></div></div></div>`;
+ H+=`<div class="card"><div class="place">${esc(g.name)}</div><div class="upd">${w.timezone&&w.timezone!==Intl.DateTimeFormat().resolvedOptions().timeZone?'Local time '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit',timeZone:w.timezone})+' · ':''}<span data-t="${t}">Updated ${ago(t)}</span></div>
+ <div class="now"><div class="ic">${ic(ck,!c.is_day)}</div><div><div class="big">${Math.round(c.temperature_2m)}°</div><div class="cond">${o&&o.text?esc(o.text):cn}</div><div class="sub">Feels like ${Math.round(c.apparent_temperature)}° · H ${Math.round(d.temperature_2m_max[0])}° L ${Math.round(d.temperature_2m_min[0])}°</div></div></div>
+ <div class="upd" style="margin-top:8px">${o?'Now: observed at '+esc(o.st)+' ('+ago(o.ts)+')':'Now: forecast model (Open-Meteo)'}</div><div class="grid"><div><b>${Math.round(c.wind_speed_10m)} mph</b><span>Wind${c.wind_gusts_10m>c.wind_speed_10m+5?' · gusts '+Math.round(c.wind_gusts_10m):''}</span></div><div><b>${c.relative_humidity_2m}%</b><span>Humidity</span></div><div><b>${d.precipitation_probability_max[0]??0}%</b><span>Rain chance</span></div></div></div>`;
  const now=Date.now();const off=(w.utc_offset_seconds||0)*1000,lnow=now+off;let i0=h.time.findIndex(x=>Date.parse(x+'Z')>lnow-36e5);if(i0<0)i0=0;
  H+='<div class="card"><h2>Next 24 hours</h2><div class="hours">';for(let i=i0;i<i0+24&&i<h.time.length;i++){const[,k]=W[h.weather_code[i]]||['','cloud'];H+=`<div class="h"><small>${i===i0?'Now':new Date(h.time[i]).toLocaleTimeString([], {hour:'numeric'})}</small>${ic(k,!h.is_day[i])}<b>${Math.round(h.temperature_2m[i])}°</b><small class="rp">${h.precipitation_probability[i]?h.precipitation_probability[i]+'%':'&nbsp;'}</small></div>`}H+='</div></div>';
  const lo=Math.min(...d.temperature_2m_min),hi=Math.max(...d.temperature_2m_max),sp=hi-lo||1;
@@ -163,9 +156,19 @@ $('f').onsubmit=async e=>{e.preventDefault();const z=$('zip').value.trim();$('zi
   if(uniq.length===1||(z.includes(',')&&new Set(base.map(r=>r.admin1+r.country_code)).size===1))choose(keyOf(base[0]));else pick(uniq)}
  catch(err){$('out').innerHTML='<p class="msg err">Search is unavailable right now. Try a ZIP code.</p>'}};
 
-const KL='aw.locs';let LOC=JSON.parse(localStorage.getItem(KL)||'null'),edit=false,curZ=null,curG=null;
+function safeSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+let wxIDB=null;try{const q=indexedDB.open('aw-safe',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>{wxIDB=q.result;wxIdbLoad()}}catch(e){}
+function wxIdbPut(){try{wxIDB&&wxIDB.transaction('kv','readwrite').objectStore('kv').put({locs:JSON.parse(JSON.stringify(LOC)),zip:localStorage.getItem(K),theme:localStorage.getItem('aw.theme')},'data')}catch(e){}}
+function wxIdbLoad(){if(localStorage.getItem('aw.locs')!==null){wxIdbPut();return}try{const r=wxIDB.transaction('kv','readonly').objectStore('kv').get('data');r.onsuccess=()=>{const v=r.result;if(v&&Array.isArray(v.locs)&&v.locs.length&&!LOC.length){LOC=v.locs;saveL();if(v.theme)setT(v.theme);chips();temps();if(!localStorage.getItem(K)&&LOC[0]){localStorage.setItem(K,LOC[0].zip);load(LOC[0].zip)}}}}catch(e){}}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+// merge places from a backup or sync: adds what's missing, never wipes; small deliberate removals (<=10) carry over from sync
+function wxMerge(R,S){let n=0;const have=new Set(LOC.map(l=>l.zip)),rz=new Set((R||[]).map(l=>l&&l.zip).filter(Boolean));
+ (R||[]).forEach(r=>{if(!r||typeof r.zip!=='string')return;const l=LOC.find(x=>x.zip===r.zip);if(!l){if(!S[r.zip]){LOC.push({zip:r.zip,name:r.name,lat:r.lat,lon:r.lon,nick:r.nick||'',mt:r.mt||0});n++}}else if((r.mt||0)>(l.mt||0)&&(r.nick||'')!==(l.nick||'')){l.nick=r.nick||'';l.mt=r.mt;n++}});
+ const gone=LOC.filter(l=>S[l.zip]&&!rz.has(l.zip));if(rz.size&&gone.length&&gone.length<=10){gone.forEach(g=>LOC.splice(LOC.indexOf(g),1));n+=gone.length}
+ if(n){saveL(true);chips();sbtn();temps()}return n}
+const KL='aw.locs';let LOC=(()=>{try{const v=JSON.parse(localStorage.getItem(KL)||'null');return Array.isArray(v)?v.filter(l=>l&&typeof l.zip==='string'):null}catch(e){return null}})(),edit=false,curZ=null,curG=null;
 if(!LOC){LOC=[];const z=localStorage.getItem(K);if(z)LOC.push({zip:z});localStorage.setItem(KL,JSON.stringify(LOC))}
-const saveL=()=>localStorage.setItem(KL,JSON.stringify(LOC));
+const saveL=q=>{safeSet(KL,JSON.stringify(LOC));wxIdbPut();if(!q&&window.wxLater)wxLater()};
 const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="currentColor"/></svg>',STARO=STAR.replace('fill="currentColor"','fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"');
 function chips(){const L=$('locs');L.innerHTML='';$('lhead').hidden=!LOC.length;$('ledit').textContent=edit?'Done':'Edit';
  LOC.forEach((l,i)=>{const c=document.createElement('div');c.className='chip'+(l.zip===curZ?' on':'');c.setAttribute('role','button');c.tabIndex=0;
@@ -174,30 +177,87 @@ function chips(){const L=$('locs');L.innerHTML='';$('lhead').hidden=!LOC.length;
   if(edit){const e=document.createElement('div');e.className='ed';e.innerHTML=(i>0?'<button data-a="up" type="button">&#8592;</button><button data-a="def" type="button">Default</button>':'')+(i<LOC.length-1?'<button data-a="dn" type="button">&#8594;</button>':'')+'<button data-a="nick" type="button">Name</button><button data-a="del" class="del" type="button">Delete</button>';
    e.onclick=ev=>{ev.stopPropagation();const a=ev.target.dataset.a;if(!a)return;
     if(a==='up'){[LOC[i-1],LOC[i]]=[LOC[i],LOC[i-1]]}else if(a==='dn'){[LOC[i+1],LOC[i]]=[LOC[i],LOC[i+1]]}else if(a==='def'){LOC.unshift(LOC.splice(i,1)[0])}
-    else if(a==='nick'){const n=prompt('Nickname for '+(l.name||l.zip)+' (e.g. Home, Grandma). Leave blank to clear:',l.nick||'');if(n===null)return;l.nick=n.trim().slice(0,20)}
+    else if(a==='nick'){const n=prompt('Nickname for '+(l.name||l.zip)+' (e.g. Home, Grandma). Leave blank to clear:',l.nick||'');if(n===null)return;l.nick=n.trim().slice(0,20);l.mt=Date.now()}
     else if(a==='del'){if(!confirm('Delete '+(l.nick||l.name||l.zip)+' from your places?'))return;LOC.splice(i,1)}saveL();chips();sbtn()};c.appendChild(e)}
   c.onclick=()=>{if(edit)return;$('zip').value=l.zip.startsWith('geo:')?l.zip.split('|')[1]:l.zip;localStorage.setItem(K,l.zip);load(l.zip)};c.onkeydown=e=>{if(e.key==='Enter')c.click()};L.appendChild(c)})}
 function sbtn(){const b=$('savebtn');if(!b)return;const s=LOC.some(l=>l.zip===curZ);b.className='savebtn'+(s?' saved':'');b.innerHTML=(s?STAR+'Saved':STARO+'Save location')}
-function onLoaded(zip,g,w){curZ=zip;curG=g;const l=LOC.find(x=>x.zip===zip);if(l){l.name=g.name;l.lat=g.lat;l.lon=g.lon;l.temp=w.current.temperature_2m;l.t=Date.now();saveL()}
+function onLoaded(zip,g,w){curZ=zip;curG=g;const l=LOC.find(x=>x.zip===zip);if(l){l.name=g.name;l.lat=g.lat;l.lon=g.lon;l.temp=w.cur?w.cur.temp:w.current.temperature_2m;l.t=Date.now();saveL(true)}
  const pl=document.querySelector('#out .place');if(pl&&!$('savebtn')){pl.insertAdjacentHTML('afterend','<button class="savebtn" id="savebtn" type="button"></button>');$('savebtn').onclick=()=>{const i=LOC.findIndex(x=>x.zip===curZ);
-  if(i>=0){if(!confirm('Remove '+(LOC[i].nick||LOC[i].name)+' from your places?'))return;LOC.splice(i,1)}else LOC.push({zip:curZ,name:curG.name,lat:curG.lat,lon:curG.lon,temp:w.current.temperature_2m,t:Date.now()});saveL();chips();sbtn()}}
+  if(i>=0){if(!confirm('Remove '+(LOC[i].nick||LOC[i].name)+' from your places?'))return;LOC.splice(i,1)}else LOC.push({zip:curZ,name:curG.name,lat:curG.lat,lon:curG.lon,temp:w.cur?w.cur.temp:w.current.temperature_2m,t:Date.now()});saveL();chips();sbtn()}}
  sbtn();chips()}
 $('ledit').onclick=()=>{edit=!edit;chips()};
-async function temps(){const s=LOC.filter(l=>l.lat!=null&&(!l.t||Date.now()-l.t>6e5));if(!s.length)return;try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.map(l=>l.lat).join(',')}&longitude=${s.map(l=>l.lon).join(',')}&current=temperature_2m&temperature_unit=fahrenheit`);const j=await r.json();const a=Array.isArray(j)?j:[j];a.forEach((x,i)=>{s[i].temp=x.current.temperature_2m;s[i].t=Date.now()});saveL();chips()}catch(e){}}
+async function temps(){const s=LOC.filter(l=>l.lat!=null&&(!l.t||Date.now()-l.t>6e5));if(!s.length)return;try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.map(l=>l.lat).join(',')}&longitude=${s.map(l=>l.lon).join(',')}&current=temperature_2m&temperature_unit=fahrenheit`);const j=await r.json();const a=Array.isArray(j)?j:[j];a.forEach((x,i)=>{s[i].temp=x.current.temperature_2m;s[i].t=Date.now()});saveL(true);chips()}catch(e){}}
 chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>6e5)load(localStorage.getItem(K))}});
-const VER='aw-v2';$('ver').textContent='Version '+VER;
-const setT=t=>{document.documentElement.dataset.theme=t;localStorage.setItem('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#fff4e4':t==='fun'?'#ff8a1f':'#2a0f3d'};
-setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b)setT(b.dataset.t)};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>3e5)load(localStorage.getItem(K))}});
+const VER='aw-v3';$('ver').textContent='Version '+VER;
+const setT=t=>{document.documentElement.dataset.theme=t;safeSet('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#e9f2fc':t==='fun'?'#6fc3ff':'#1d3557'};
+setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b){setT(b.dataset.t);safeSet('aw.theme.set','1');wxIdbPut();window.wxLater&&wxLater()}};
 $('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
 async function doUpd(){const v=$('ver');v.textContent='Updating...';try{const r=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration('/weather/');if(r){await r.update().catch(()=>{});if(r.waiting)r.waiting.postMessage('skip')}
  if(window.caches)for(const k of await caches.keys())await caches.delete(k);const t=await (await fetch('/weather/sw.js?v='+Date.now(),{cache:'no-store'})).text();const lv=(t.match(/const C='([^']+)'/)||[])[1];
  v.textContent=lv&&lv!==VER?'Updating to '+lv+'...':"You're on the latest version ("+VER+")";setTimeout(()=>location.reload(),1500)}catch(e){v.textContent='Could not check right now'}}
 $('chk').onclick=doUpd;$('updBan').onclick=doUpd;
+if('serviceWorker' in navigator){const had=!!navigator.serviceWorker.controller;let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!rl){rl=true;location.reload()}})}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/weather/sw.js',{scope:'/weather/'}).then(r=>{const sh=()=>{if(navigator.serviceWorker.controller)$('updBan').hidden=false};if(r.waiting)sh();r.addEventListener('updatefound',()=>{const w=r.installing;w&&w.addEventListener('statechange',()=>{if(w.state==='installed')sh()})})}).catch(()=>{});
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
 addEventListener('appinstalled',()=>localStorage.setItem('aw.installed','1'));
 $('inst').onclick=async()=>{const b0=$('ihelp');if(matchMedia('(display-mode: standalone)').matches||navigator.standalone||(!dp&&localStorage.getItem('aw.installed'))){b0.hidden=false;b0.textContent='Already installed on this phone. You are all set.';return}if(dp){dp.prompt();await dp.userChoice.catch(()=>{});dp=null;return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);const b=$('ihelp');b.hidden=!b.hidden;b.textContent=ios?'In Safari: tap Share (square with arrow) → "Add to Home Screen" → Add.':'Open the browser menu (⋮) → "Install app" or "Add to Home screen".'};
+// ---- Menu pages ----
+(function(){const $=id=>document.getElementById(id);const cm=()=>$('menu').classList.remove('on');
+ const pg=id=>{cm();$(id).classList.add('on')};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.page').classList.remove('on'));
+ $('mRef').onclick=()=>{cm();const z=localStorage.getItem(K);if(z)load(z)};$('mPlaces').onclick=()=>{cm();if(!edit){edit=true;chips()}$('locs').scrollIntoView({behavior:'smooth',block:'center'})};
+ $('mSync').onclick=()=>pg('pgSync');$('mBk').onclick=()=>pg('pgBk');$('mVer').textContent='Version '+VER;
+ // live "Updated X min ago"
+ setInterval(()=>{const e=document.querySelector('#out [data-t]');if(e)e.textContent='Updated '+ago(+e.dataset.t)},30000);
+})();
+// ---- Backup & Restore ----
+(function(){const $=id=>document.getElementById(id);
+ const data=()=>({app:'ashley-weather',v:1,locs:LOC.map(({temp,t,...r})=>r),zip:localStorage.getItem(K),theme:localStorage.getItem('aw.theme'),saved:Date.now()});
+ const fname=()=>'weather-backup-'+new Date().toISOString().slice(0,10)+'.json';
+ $('bkSave').onclick=async()=>{const txt=JSON.stringify(data(),null,1),f=new File([txt],fname(),{type:'application/json'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Weather backup'});$('bkMsg').textContent='Backup shared.';return}}catch(e){if(e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=fname();document.body.appendChild(a);a.click();a.remove();$('bkMsg').textContent='Backup saved to Downloads.'};
+ $('bkCopy').onclick=async()=>{const t=JSON.stringify(data());try{await navigator.clipboard.writeText(t);$('bkMsg').textContent='Copied. Paste it somewhere safe, like a note or email to yourself.'}catch(e){$('rsTxt').value=t;$('bkMsg').textContent='Copy the text in the box below.'}};
+ function doRestore(t){try{const j=JSON.parse(t);if(!j||!Array.isArray(j.locs))throw 0;const n=wxMerge(j.locs,{});
+  $('rsMsg').textContent=n?'Restored '+n+' place'+(n===1?'':'s')+'. Nothing was deleted.':'Everything in that backup is already here. Nothing changed.'}catch(e){$('rsMsg').textContent='That does not look like a weather backup.'}}
+ $('rsFile').onclick=()=>$('rsIn').click();$('rsIn').onchange=async e=>{const f=e.target.files[0];if(f)doRestore(await f.text());e.target.value=''};$('rsGo').onclick=()=>doRestore($('rsTxt').value);
+})();
+// ---- Sync with Google (Drive app-only folder) ----
+(function(){const $=id=>document.getElementById(id),LS=localStorage;
+const CID='844979369291-3008v3sv7o2tv9ktuj8dccvd0khjdneh.apps.googleusercontent.com',SCOPE='https://www.googleapis.com/auth/drive.appdata openid email',FN='weather-sync.json';
+const KS={on:'aw.sync.on',em:'aw.sync.email',last:'aw.sync.last',snap:'aw.sync.snap',fid:'aw.sync.fid'};
+let tok=null,tokExp=0,busy=false,again=false,deb=null,gisP=null;const ON=()=>LS.getItem(KS.on)==='1';
+window.wxLater=()=>{if(!ON())return;clearTimeout(deb);deb=setTimeout(()=>sync(false),3000)};
+function gis(){return gisP||(gisP=new Promise((ok,no)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=1;s.onload=()=>ok();s.onerror=()=>{gisP=null;no(new Error('offline'))};document.head.appendChild(s)}))}
+async function token(interactive){if(tok&&Date.now()<tokExp-60000)return tok;await gis();
+ return new Promise((ok,no)=>{const t=setTimeout(()=>no(new Error('timeout')),interactive?120000:15000);
+  google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,login_hint:LS.getItem(KS.em)||undefined,callback:r=>{clearTimeout(t);if(r&&r.access_token){tok=r.access_token;tokExp=Date.now()+(r.expires_in||3600)*1000;ok(tok)}else no(new Error('denied'))},error_callback:()=>{clearTimeout(t);no(new Error('failed'))}}).requestAccessToken({prompt:''})})}
+async function api(u,o={}){const t=await token(false);const r=await fetch(u,{...o,headers:{...(o.headers||{}),Authorization:'Bearer '+t}});if(r.status===401){tok=null;throw new Error('auth')}if(!r.ok&&r.status!==404)throw new Error('http');return r}
+const DR='https://www.googleapis.com/drive/v3/files',UP='https://www.googleapis.com/upload/drive/v3/files';
+async function findFile(){let id=LS.getItem(KS.fid);if(id)return id;const r=await(await api(DR+'?spaces=appDataFolder&fields=files(id)&q='+encodeURIComponent("name='"+FN+"'"))).json();id=r.files&&r.files[0]&&r.files[0].id;if(id)LS.setItem(KS.fid,id);return id||null}
+async function download(id){const r=await api(DR+'/'+id+'?alt=media');if(r.status===404){LS.removeItem(KS.fid);return null}return r.json()}
+async function upload(id,body){const j=JSON.stringify(body);if(id){const r=await api(UP+'/'+id+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:j});if(r.status!==404)return id;LS.removeItem(KS.fid)}
+ const b='wxsync'+Date.now(),mp='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:FN,parents:['appDataFolder']})+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+j+'\r\n--'+b+'--';
+ const r=await(await api(UP+'?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:mp})).json();LS.setItem(KS.fid,r.id);return r.id}
+async function sync(first,interactive){if(!ON())return;if(busy){again=true;return}busy=true;draw('Syncing...');
+ try{if(interactive)await token(true);let id=await findFile();let remote=id?await download(id):null;if(id&&!remote)id=null;
+  let S={};try{S=JSON.parse(LS.getItem(KS.snap)||'{}')}catch(e){}
+  if(remote&&Array.isArray(remote.locs)){wxMerge(remote.locs,S);if(remote.theme&&first&&!LS.getItem('aw.theme.set'))setT(remote.theme)}
+  await upload(id,{app:'ashley-weather',v:1,locs:LOC.map(({temp,t,...r})=>r),theme:LS.getItem('aw.theme'),saved:Date.now()});
+  LS.setItem(KS.snap,JSON.stringify(Object.fromEntries(LOC.map(l=>[l.zip,1]))));LS.setItem(KS.last,Date.now());$('syNote').style.display='none'}
+ catch(e){if(e.message==='offline'||e instanceof TypeError)draw('Offline. Will sync when you are back online.');else $('syNote').style.display='block'}
+ finally{busy=false;draw();if(again){again=false;wxLater()}}}
+function draw(msg){const on=ON(),em=LS.getItem(KS.em)||'your Google account',lt=+LS.getItem(KS.last)||0;
+ $('syLbl').textContent=on?'Sync with Google':'Sign in with Google';$('syFoot').textContent=on?'Synced as '+em+(lt?' · '+ago(lt)+'':' · Not synced yet'):'';$('syFoot').style.display=on?'block':'none';
+ const h=$('mhSync');h.classList.toggle('on',on);h.querySelector('.dst').textContent=on?(lt?'Synced '+ago(lt):'Not synced yet'):'Saved on this phone';
+ $('syStat').textContent=msg||(on?'Signed in as '+em+'. '+(lt?'Last synced '+ago(lt)+'.':'Not synced yet.'):'Not signed in. Your places are only on this phone.');$('syOut').style.display=on?'none':'flex';$('syInRow').style.display=on?'flex':'none'}
+$('syIn').onclick=async()=>{draw('Opening Google sign-in...');try{await gis();await new Promise((ok,no)=>google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,callback:r=>{if(r.access_token){tok=r.access_token;tokExp=Date.now()+(r.expires_in||3600)*1000;ok()}else no(new Error('denied'))},error_callback:()=>no(new Error('failed'))}).requestAccessToken({prompt:'select_account'}));
+ const u=await(await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+tok}})).json();LS.setItem(KS.em,u.email||'');LS.setItem(KS.on,'1');LS.setItem(KS.snap,'{}');await sync(true)}catch(e){draw('Sign-in did not finish. Your places are safe on this phone. Try again.')}};
+$('syNow').onclick=()=>sync(false,true);$('syNote').onclick=()=>sync(false,true);
+$('syOff').onclick=()=>{if(!confirm('Sign out of sync? Your places stay on this phone.'))return;try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;Object.values(KS).forEach(k=>LS.removeItem(k));$('syNote').style.display='none';draw()};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sync(false);else if(deb){clearTimeout(deb);deb=null;sync(false)}});
+addEventListener('online',()=>sync(false));setInterval(()=>draw(),60000);draw();if(ON())setTimeout(()=>sync(true),1500);
+})();
 </script></body></html>
