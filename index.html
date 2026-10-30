@@ -191,7 +191,7 @@ chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>3e5)load(localStorage.getItem(K))}});
-const VER='aw-v4';$('ver').textContent='Version '+VER;
+const VER='aw-v5';$('ver').textContent='Version '+VER;
 const setT=t=>{document.documentElement.dataset.theme=t;safeSet('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#e9f2fc':t==='fun'?'#6fc3ff':'#1d3557'};
 setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b){setT(b.dataset.t);safeSet('aw.theme.set','1');wxIdbPut();window.wxLater&&wxLater()}};
 $('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
@@ -228,13 +228,17 @@ $('inst').onclick=async()=>{const b0=$('ihelp');if(matchMedia('(display-mode: st
 (function(){const $=id=>document.getElementById(id),LS=localStorage;
 const CID='844979369291-3008v3sv7o2tv9ktuj8dccvd0khjdneh.apps.googleusercontent.com',SCOPE='https://www.googleapis.com/auth/drive.appdata openid email',FN='weather-sync.json';
 const KS={on:'aw.sync.on',em:'aw.sync.email',last:'aw.sync.last',snap:'aw.sync.snap',fid:'aw.sync.fid'};
-let tok=null,tokExp=0,busy=false,again=false,deb=null,gisP=null;const ON=()=>LS.getItem(KS.on)==='1';
+const TK='aw.sync.tok';let tok=null,tokExp=0;try{const v=JSON.parse(localStorage.getItem(TK)||'null');if(v&&v.e>Date.now()+60000){tok=v.t;tokExp=v.e}}catch(e){}
+function saveTok(){try{Storage.prototype.setItem.call(localStorage,TK,JSON.stringify({t:tok,e:tokExp}))}catch(e){}}function dropTok(){tok=null;tokExp=0;try{localStorage.removeItem(TK)}catch(e){}}
+// silent reconnect failed (needs a tap): retry once on her next tap anywhere, never sign out
+let rcArm=false;function armReconnect(){const n=document.getElementById('syNote');if(n){n.textContent='Tap to reconnect sync';n.style.display=''}if(rcArm)return;rcArm=true;document.addEventListener('click',e=>{rcArm=false;if(e.target&&e.target.closest&&e.target.closest('#syOff,#syNote,#syNow'))return;window.__rcRetry&&window.__rcRetry()},{capture:true,once:true})}
+let tokJunk=0,busy=false,again=false,deb=null,gisP=null;const ON=()=>LS.getItem(KS.on)==='1';
 window.wxLater=()=>{if(!ON())return;clearTimeout(deb);deb=setTimeout(()=>sync(false),3000)};
 function gis(){return gisP||(gisP=new Promise((ok,no)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=1;s.onload=()=>ok();s.onerror=()=>{gisP=null;no(new Error('offline'))};document.head.appendChild(s)}))}
 async function token(interactive){if(tok&&Date.now()<tokExp-60000)return tok;await gis();
  return new Promise((ok,no)=>{const t=setTimeout(()=>no(new Error('timeout')),interactive?120000:15000);
-  google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,login_hint:LS.getItem(KS.em)||undefined,callback:r=>{clearTimeout(t);if(r&&r.access_token){tok=r.access_token;tokExp=Date.now()+(r.expires_in||3600)*1000;ok(tok)}else no(new Error('denied'))},error_callback:()=>{clearTimeout(t);no(new Error('failed'))}}).requestAccessToken({prompt:''})})}
-async function api(u,o={}){const t=await token(false);const r=await fetch(u,{...o,headers:{...(o.headers||{}),Authorization:'Bearer '+t}});if(r.status===401){tok=null;throw new Error('auth')}if(!r.ok&&r.status!==404)throw new Error('http');return r}
+  google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,login_hint:LS.getItem(KS.em)||undefined,callback:r=>{clearTimeout(t);if(r&&r.access_token){tok=r.access_token;tokExp=Date.now()+(r.expires_in||3600)*1000;saveTok();ok(tok)}else no(new Error('denied'))},error_callback:()=>{clearTimeout(t);no(new Error('failed'))}}).requestAccessToken({prompt:''})})}
+async function api(u,o={}){const t=await token(false);const r=await fetch(u,{...o,headers:{...(o.headers||{}),Authorization:'Bearer '+t}});if(r.status===401){dropTok();throw new Error('auth')}if(!r.ok&&r.status!==404)throw new Error('http');return r}
 const DR='https://www.googleapis.com/drive/v3/files',UP='https://www.googleapis.com/upload/drive/v3/files';
 async function findFile(){let id=LS.getItem(KS.fid);if(id)return id;const r=await(await api(DR+'?spaces=appDataFolder&fields=files(id)&q='+encodeURIComponent("name='"+FN+"'"))).json();id=r.files&&r.files[0]&&r.files[0].id;if(id)LS.setItem(KS.fid,id);return id||null}
 async function download(id){const r=await api(DR+'/'+id+'?alt=media');if(r.status===404){LS.removeItem(KS.fid);return null}return r.json()}
@@ -247,16 +251,16 @@ async function sync(first,interactive){if(!ON())return;if(busy){again=true;retur
   if(remote&&Array.isArray(remote.locs)){wxMerge(remote.locs,S);if(remote.theme&&first&&!LS.getItem('aw.theme.set'))setT(remote.theme)}
   await upload(id,{app:'ashley-weather',v:1,locs:LOC.map(({temp,t,...r})=>r),theme:LS.getItem('aw.theme'),saved:Date.now()});
   LS.setItem(KS.snap,JSON.stringify(Object.fromEntries(LOC.map(l=>[l.zip,1]))));LS.setItem(KS.last,Date.now());$('syNote').style.display='none'}
- catch(e){if(e.message==='offline'||e instanceof TypeError)draw('Offline. Will sync when you are back online.');else $('syNote').style.display='block'}
+ catch(e){if(e.message==='offline'||e instanceof TypeError)draw('Offline. Will sync when you are back online.');else armReconnect()}
  finally{busy=false;draw();if(again){again=false;wxLater()}}}
 function draw(msg){const on=ON(),em=LS.getItem(KS.em)||'your Google account',lt=+LS.getItem(KS.last)||0;
  $('syLbl').textContent=on?'Sync with Google':'Sign in with Google';$('syFoot').textContent=on?'Synced as '+em+(lt?' · '+ago(lt)+'':' · Not synced yet'):'';$('syFoot').style.display=on?'block':'none';
  const h=$('mhSync');h.classList.toggle('on',on);h.querySelector('.dst').textContent=on?(lt?'Synced '+ago(lt):'Not synced yet'):'Saved on this phone';
  $('syStat').textContent=msg||(on?'Signed in as '+em+'. '+(lt?'Last synced '+ago(lt)+'.':'Not synced yet.'):'Not signed in. Your places are only on this phone.');$('syOut').style.display=on?'none':'flex';$('syInRow').style.display=on?'flex':'none'}
-$('syIn').onclick=async()=>{draw('Opening Google sign-in...');try{await gis();await new Promise((ok,no)=>google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,callback:r=>{if(r.access_token){tok=r.access_token;tokExp=Date.now()+(r.expires_in||3600)*1000;ok()}else no(new Error('denied'))},error_callback:()=>no(new Error('failed'))}).requestAccessToken({prompt:'select_account'}));
+$('syIn').onclick=async()=>{draw('Opening Google sign-in...');try{await gis();await new Promise((ok,no)=>google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,callback:r=>{if(r.access_token){tok=r.access_token;tokExp=Date.now()+(r.expires_in||3600)*1000;saveTok();ok()}else no(new Error('denied'))},error_callback:()=>no(new Error('failed'))}).requestAccessToken({prompt:'select_account'}));
  const u=await(await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+tok}})).json();LS.setItem(KS.em,u.email||'');LS.setItem(KS.on,'1');LS.setItem(KS.snap,'{}');await sync(true)}catch(e){draw('Sign-in did not finish. Your places are safe on this phone. Try again.')}};
-$('syNow').onclick=()=>sync(false,true);$('syNote').onclick=()=>sync(false,true);
-$('syOff').onclick=()=>{if(!confirm('Sign out of sync? Your places stay on this phone.'))return;try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;Object.values(KS).forEach(k=>LS.removeItem(k));$('syNote').style.display='none';draw()};
+$('syNow').onclick=()=>sync(false,true);$('syNote').onclick=()=>sync(false,true);window.__rcRetry=()=>sync(false,true);
+$('syOff').onclick=()=>{if(!confirm('Sign out of sync? Your places stay on this phone.'))return;dropTok();try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;Object.values(KS).forEach(k=>LS.removeItem(k));$('syNote').style.display='none';draw()};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sync(false);else if(deb){clearTimeout(deb);deb=null;sync(false)}});
 addEventListener('online',()=>sync(false));setInterval(()=>draw(),60000);draw();if(ON())setTimeout(()=>sync(true),1500);
 })();
