@@ -61,11 +61,11 @@ textarea{width:100%;min-height:100px;border-radius:14px;border:1.5px solid var(-
 #syNote{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:40;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:8px 16px;font:700 13px -apple-system,system-ui,sans-serif;box-shadow:0 4px 14px #0004;cursor:pointer}
 /* light */
 [data-theme=light]{--bg1:#e9f2fc;--bg2:#f7fbff;--ink:#1d2b3f;--mut:#5d708a;--card:#ffffffee;--card2:#eef4fb;--acc:#2f7ad6;--line:#d8e3f0;--title:#1d3557}
-[data-theme=light] .card{box-shadow:0 4px 16px #1d355714}[data-theme=light] .h .rp,[data-theme=light] .d .rp{color:#2f6fbf}[data-theme=light] .alert{background:#fff1d6;color:#4a3410}[data-theme=light] .alert.sev{background:#ffe0dc;color:#5a1616}[data-theme=light] input{background:#fff}[data-theme=light] .err{color:#c0392b}[data-theme=light] .mp{background:#f7fbff}
+[data-theme=light] .card{box-shadow:0 4px 16px #1d355714}[data-theme=light] .h .rp,[data-theme=light] .d .rp{color:#2f6fbf}[data-theme=light] .alert{background:#fff1d6;color:#4a3410}[data-theme=light] .alert.sev{background:#ffe0dc;color:#5a1616}[data-theme=light] input,[data-theme=light] textarea{background:#fff}[data-theme=light] .err{color:#c0392b}[data-theme=light] .mp{background:#f7fbff}
 /* fun */
 [data-theme=fun]{--bg1:#6fc3ff;--bg2:#8f7bff;--ink:#22204a;--mut:#4d4a85;--card:#ffffffee;--card2:#efeaff;--acc:#7a5cff;--line:#e0d8ff;--title:#ffffff}
 [data-theme=fun] body{background:linear-gradient(160deg,#6fd3ff 0%,#8f7bff 55%,#ffb86b 100%) fixed}[data-theme=fun] h1{text-shadow:0 2px 0 #5a3fd6}[data-theme=fun] h1 small{color:#fff}[data-theme=fun] .foot{color:#fff}
-[data-theme=fun] .card{border-radius:26px;border:2px solid #fff}[data-theme=fun] .h .rp,[data-theme=fun] .d .rp{color:#1f6fd6}[data-theme=fun] .alert{background:#fff4e0;color:#4a3410}[data-theme=fun] input{background:#fff}[data-theme=fun] .mp{background:#f7f4ff}[data-theme=fun] .mtitle,[data-theme=fun] .ph h3{color:#4b33c4}[data-theme=fun] .err{color:#c0392b}
+[data-theme=fun] .card{border-radius:26px;border:2px solid #fff}[data-theme=fun] .h .rp,[data-theme=fun] .d .rp{color:#1f6fd6}[data-theme=fun] .alert{background:#fff4e0;color:#4a3410}[data-theme=fun] input,[data-theme=fun] textarea{background:#fff}[data-theme=fun] h1 small{text-shadow:0 1px 2px #3a2a9a99}[data-theme=fun] .mp{background:#f7f4ff}[data-theme=fun] .mtitle,[data-theme=fun] .ph h3{color:#4b33c4}[data-theme=fun] .err{color:#c0392b}
 
 </style></head><body><div class="menu" id="menu"><div class="mp" role="dialog" aria-label="Menu">
 <div class="mhd"><div><div class="mtitle">My Weather</div><div class="msync" id="mhSync"><span class="dot"></span><span class="dst">Saved on this phone</span></div></div><button class="ib mx" id="menuX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -191,7 +191,7 @@ chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>3e5)load(localStorage.getItem(K))}});
-const VER='aw-v3';$('ver').textContent='Version '+VER;
+const VER='aw-v4';$('ver').textContent='Version '+VER;
 const setT=t=>{document.documentElement.dataset.theme=t;safeSet('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#e9f2fc':t==='fun'?'#6fc3ff':'#1d3557'};
 setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b){setT(b.dataset.t);safeSet('aw.theme.set','1');wxIdbPut();window.wxLater&&wxLater()}};
 $('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
@@ -215,7 +215,7 @@ $('inst').onclick=async()=>{const b0=$('ihelp');if(matchMedia('(display-mode: st
 // ---- Backup & Restore ----
 (function(){const $=id=>document.getElementById(id);
  const data=()=>({app:'ashley-weather',v:1,locs:LOC.map(({temp,t,...r})=>r),zip:localStorage.getItem(K),theme:localStorage.getItem('aw.theme'),saved:Date.now()});
- const fname=()=>'weather-backup-'+new Date().toISOString().slice(0,10)+'.json';
+ const fname=()=>'weather-backup-'+new Date().toLocaleDateString('en-CA')+'.json';
  $('bkSave').onclick=async()=>{const txt=JSON.stringify(data(),null,1),f=new File([txt],fname(),{type:'application/json'});
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Weather backup'});$('bkMsg').textContent='Backup shared.';return}}catch(e){if(e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=fname();document.body.appendChild(a);a.click();a.remove();$('bkMsg').textContent='Backup saved to Downloads.'};
