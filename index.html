@@ -230,7 +230,7 @@ chips();temps();
 window.onLoaded=onLoaded;
 const z0=(LOC[0]&&LOC[0].zip)||localStorage.getItem(K);if(z0){$('zip').value=z0.startsWith('geo:')?z0.split('|')[1]:z0;localStorage.setItem(K,z0);load(z0)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(K)){greet();const c=JSON.parse(localStorage.getItem(KC)||'null');if(!c||Date.now()-c.t>3e5)load(localStorage.getItem(K))}});
-const VER='aw-v7';$('ver').textContent='Version '+VER;
+const VER='aw-v8';$('ver').textContent='Version '+VER;
 const setT=t=>{document.documentElement.dataset.theme=t;safeSet('aw.theme',t);document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#e9f2fc':t==='fun'?'#6fc3ff':'#1d3557'};
 setT(document.documentElement.dataset.theme);$('thm').onclick=e=>{const b=e.target.closest('[data-t]');if(b){setT(b.dataset.t);safeSet('aw.theme.set','1');wxIdbPut();window.wxLater&&wxLater()}};
 $('menuBtn').onclick=()=>$('menu').classList.add('on');$('menuX').onclick=()=>$('menu').classList.remove('on');$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('on')};
@@ -293,7 +293,7 @@ const KS={on:'aw.sync.on',em:'aw.sync.email',last:'aw.sync.last',snap:'aw.sync.s
 const TK='aw.sync.tok';let tok=null,tokExp=0;try{const v=JSON.parse(localStorage.getItem(TK)||'null');if(v&&v.e>Date.now()+60000){tok=v.t;tokExp=v.e}}catch(e){}
 function saveTok(){try{Storage.prototype.setItem.call(localStorage,TK,JSON.stringify({t:tok,e:tokExp}))}catch(e){}}function dropTok(){tok=null;tokExp=0;try{localStorage.removeItem(TK)}catch(e){}}
 // silent reconnect failed (needs a tap): retry once on her next tap anywhere, never sign out
-let rcArm=false;function armReconnect(){const n=document.getElementById('syNote');if(n){n.textContent='Tap to reconnect sync';n.style.display=''}if(rcArm)return;rcArm=true;document.addEventListener('click',e=>{rcArm=false;if(e.target&&e.target.closest&&e.target.closest('#syOff,#syNote,#syNow'))return;window.__rcRetry&&window.__rcRetry()},{capture:true,once:true})}
+let rcArm=false;function armReconnect(){const n=document.getElementById('syNote');if(n){n.textContent='Continue syncing';n.style.display=''}}
 let tokJunk=0,busy=false,again=false,deb=null,gisP=null;const ON=()=>LS.getItem(KS.on)==='1';
 window.wxLater=()=>{if(!ON())return;clearTimeout(deb);deb=setTimeout(()=>sync(false),3000)};
 function gis(){return gisP||(gisP=new Promise((ok,no)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=1;s.onload=()=>ok();s.onerror=()=>{gisP=null;no(new Error('offline'))};document.head.appendChild(s)}))}
@@ -308,7 +308,7 @@ async function upload(id,body){const j=JSON.stringify(body);if(id){const r=await
  const b='wxsync'+Date.now(),mp='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:FN,parents:['appDataFolder']})+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+j+'\r\n--'+b+'--';
  const r=await(await api(UP+'?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:mp})).json();LS.setItem(KS.fid,r.id);return r.id}
 async function sync(first,interactive){if(!ON())return;if(busy){again=true;return}busy=true;draw('Syncing...');
- try{if(interactive)await token(true);let id=await findFile();let remote=id?await download(id):null;if(id&&!remote)id=null;
+ try{if(interactive)await token(true);else if(!(tok&&Date.now()<tokExp-60000)){busy=false;armReconnect();draw();return}let id=await findFile();let remote=id?await download(id):null;if(id&&!remote)id=null;
   let S={};try{S=JSON.parse(LS.getItem(KS.snap)||'{}')}catch(e){}
   if(remote&&Array.isArray(remote.locs)){wxMerge(remote.locs,S);if(remote.theme&&first&&!LS.getItem('aw.theme.set'))setT(remote.theme)}
   await upload(id,{app:'ashley-weather',v:1,locs:LOC.map(({temp,t,...r})=>r),theme:LS.getItem('aw.theme'),saved:Date.now()});
